@@ -1,5 +1,5 @@
 class BotButton extends Button{
-    constructor(scene, x, y, cursorInput){
-      super(scene, x, y, cursorInput);
+    constructor(scene, x, y, cursorInput, clickFunction){
+      super(scene, x, y, cursorInput, clickFunction);
     }
 }
