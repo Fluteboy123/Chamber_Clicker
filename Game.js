@@ -12,7 +12,8 @@ let game = new Phaser.Game(config);
 
 gameScene.init = function()
 {
-
+    this.followCount = 0;
+    this.popularityScore = 0;
 };
 
 gameScene.preload = function()
@@ -74,8 +75,8 @@ gameScene.fillControlPanel = function()
     this.controlPanel.add(this.add.text(10,config.height-100,"Popularity",{fill:"#000"}));
     this.controlPanel.add(this.add.text(10,config.height-50,"Followers",{fill:"#000"}));
     //Text boxes that hold the game scores in them
-    this.controlPanel.popularityLabel = this.add.text(10,config.height-75,"0",{fill:"#000"});
-    this.controlPanel.followerLabel = this.add.text(10,config.height-25,"0",{fill:"#000"});
+    this.controlPanel.popularityLabel = this.add.text(10,config.height-75,this.popularityScore,{fill:"#000"});
+    this.controlPanel.followerLabel = this.add.text(10,config.height-25,this.followCount,{fill:"#000"});
     this.controlPanel.add(this.controlPanel.popularityLabel);
     this.controlPanel.add(this.controlPanel.followerLabel);
 };
@@ -99,3 +100,8 @@ gameScene.fillEvents = function()
     this.eventWindow.timer = 0;
     this.eventWindow.queue = [];
 };
+
+gameScene.addFollowers = function(num)
+{
+    this.followCount += num;
+}
