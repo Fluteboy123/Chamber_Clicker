@@ -22,6 +22,9 @@ gameScene.preload = function()
     this.load.image('anon',"assets/Anonymous.jpg");
     this.load.image('tweetBG',"assets/Blank.png");
     //['like','retweet','reply','mute','report']
+
+    this.load.image('like', "assets/like.jpeg");
+
 };
 
 gameScene.create = function()
@@ -42,9 +45,9 @@ gameScene.create = function()
     this.fillEvents();
 
     //Buttons
-    this.followButton = new Button(this,125,config.height-137,'follow',()=>{gameScene.addFollowers(1);});
+    this.followButton = new Button(this,50,config.height-175,'follow',()=>{gameScene.addFollowers(1)});
     this.followButton.setInteractive();
-    this.followButton.on('pointerdown',()=>{gameScene.addFollowers(1);gameScene.tweetWall.addTweet("Test",gameScene);});
+    this.followButton.on('pointerdown',()=>{gameScene.addFollowers(1);gameScene.tweetWall.addTweet("Test",this);});
 };
 
 gameScene.update = function(time,delta)
@@ -104,46 +107,26 @@ gameScene.fillTweetWall = function()
             //If the box will end up off of the screen
             if(tweet.y + tweetHeight+10>=config.height)
             {
-                const wall = this;
-                scene.tweens.add({
-                    targets:tweet,
-                    duration:100,
-                    y:tweet.y+tweetHeight+10,
-                    onComplete: function()
-                    {
-                        wall.currentTweets.shift();
-                        tweet.destroy();
-                        i--;
-                    }
-                });
+                this.currentTweets.shift();
+                tweet.destroy();
+                i--;
             }
             else
-            {
-                scene.tweens.add({
-                    targets:tweet,
-                    duration:100,
-                    y:tweet.y+tweetHeight+10
-                });
-            }
+                tweet.y += tweetHeight+10;
         }
         //Make the new box
         let newTweet = scene.add.container(scene.windowPos[1][0]+10,scene.windowPos[1][1]+10);
         newTweet.add(scene.add.sprite(tweetLength/2,tweetHeight/2,'tweetBG'));
+        let likeButton = scene.add.sprite(100,100,'like');
+        likeButton.setScale(.2);
+        newTweet.add(likeButton);
+
+
         let anon = scene.add.sprite(25,25,'anon');
         anon.setScale(.1171875);
         newTweet.add(anon);
         newTweet.add(scene.add.text(50,15,generateName(),{fill:"#000"}));
         newTweet.add(scene.add.text(30,50,text,{fill:"#000"}));
-        scene.tweens.add({
-            targets:newTweet,
-            duration:100,
-            onStart:function()
-            {
-                newTweet.setScale(0);
-            },
-            scaleX:1,
-            scaleY:1
-        });
         this.currentTweets.push(newTweet);
     };
 };
