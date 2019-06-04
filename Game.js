@@ -19,6 +19,9 @@ gameScene.init = function()
 gameScene.preload = function()
 {
     this.load.image('follow',"assets/FollowButton.png");
+    this.load.image('anon',"assets/Anonymous.jpg");
+    this.load.image('tweetBG',"assets/Blank.png");
+    //['like','retweet','reply','mute','report']
 };
 
 gameScene.create = function()
@@ -41,7 +44,7 @@ gameScene.create = function()
     //Buttons
     this.followButton = new Button(this,50,config.height-175,'follow',()=>{gameScene.addFollowers(1)});
     this.followButton.setInteractive();
-    this.followButton.on('pointerdown',()=>{gameScene.addFollowers(1)});
+    this.followButton.on('pointerdown',()=>{gameScene.addFollowers(1);gameScene.tweetWall.addTweet("Test",this);});
 };
 
 gameScene.update = function(time,delta)
@@ -88,6 +91,32 @@ gameScene.fillTweetWall = function()
 {
     //List of all tweet sprites currently on the wall
     this.tweetWall.currentTweets = [];
+
+    //Function for adding a tweet
+    this.tweetWall.addTweet = function(text,scene)
+    {
+        //Dimensions of the box
+        const tweetHeight = 150, tweetLength = scene.windowPos[2][0] - scene.windowPos[1][0] - 20;
+        //For every current container on the panel
+        for(let i=0;i<this.currentTweets.length;i++)
+        {
+            let tweet = this.currentTweets[i];
+            //If the box will end up off of the screen
+            if(tweet.y + tweetHeight+10>=config.height)
+            {
+                this.currentTweets.shift();
+                tweet.destroy();
+            }
+            else
+                tweet.y += tweetHeight+10;
+        }
+        //Make the new box
+        let newTweet = scene.add.container(scene.windowPos[1][0]+10,scene.windowPos[1][1]+10);
+        newTweet.add(scene.add.sprite(0,0,'tweetBG'));
+        newTweet.add(scene.add.sprite(10,10,'anon'));
+        newTweet.add(scene.add.text(50,15,generateName(),{fill:"#000"}));
+        newTweet.add(scene.add.text(30,50,text,{fill:"#000"}));
+    };
 };
 gameScene.fillUpgrades = function()
 {
@@ -109,4 +138,10 @@ gameScene.addFollowers = function(num)
 {
     this.followCount += num;
     this.controlPanel.followerLabel.setText(this.followCount);
+};
+
+gameScene.changePopularity = function(num)
+{
+    this.popularityScore += num;
+    this.controlPanel.popularityLabel.setText(this.popularityScore);
 };
