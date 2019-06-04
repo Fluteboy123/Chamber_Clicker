@@ -113,8 +113,10 @@ gameScene.fillTweetWall = function()
         }
         //Make the new box
         let newTweet = scene.add.container(scene.windowPos[1][0]+10,scene.windowPos[1][1]+10);
-        newTweet.add(scene.add.sprite(0,0,'tweetBG'));
-        newTweet.add(scene.add.sprite(10,10,'anon'));
+        newTweet.add(scene.add.sprite(tweetLength/2,tweetHeight/2,'tweetBG'));
+        let anon = scene.add.sprite(25,25,'anon');
+        anon.setScale(.1171875);
+        newTweet.add(anon);
         newTweet.add(scene.add.text(50,15,generateName(),{fill:"#000"}));
         newTweet.add(scene.add.text(30,50,text,{fill:"#000"}));
         this.currentTweets.push(newTweet);
