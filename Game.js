@@ -18,7 +18,7 @@ gameScene.init = function()
 
 gameScene.preload = function()
 {
-
+    this.load.image('follow',"assets/FollowButton.png");
 };
 
 gameScene.create = function()
@@ -38,6 +38,10 @@ gameScene.create = function()
     this.fillUpgrades();
     this.fillEvents();
 
+    //Buttons
+    this.followButton = new Button(this,50,config.height-175,'follow',()=>{gameScene.addFollowers(1)});
+    this.followButton.setInteractive();
+    this.followButton.on('pointerdown',()=>{gameScene.addFollowers(1)});
 };
 
 gameScene.update = function(time,delta)
@@ -104,4 +108,5 @@ gameScene.fillEvents = function()
 gameScene.addFollowers = function(num)
 {
     this.followCount += num;
-}
+    this.controlPanel.followerLabel.setText(this.followCount);
+};
