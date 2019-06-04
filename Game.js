@@ -106,6 +106,7 @@ gameScene.fillTweetWall = function()
             {
                 this.currentTweets.shift();
                 tweet.destroy();
+                i--;
             }
             else
                 tweet.y += tweetHeight+10;
@@ -116,6 +117,7 @@ gameScene.fillTweetWall = function()
         newTweet.add(scene.add.sprite(10,10,'anon'));
         newTweet.add(scene.add.text(50,15,generateName(),{fill:"#000"}));
         newTweet.add(scene.add.text(30,50,text,{fill:"#000"}));
+        this.currentTweets.push(newTweet);
     };
 };
 gameScene.fillUpgrades = function()
