@@ -34,7 +34,7 @@ gameScene.create = function()
     this.windowColors = [0x88ffff,0xccffff,0xf0f0f0];
 
     //Buttons
-    this.followButton = new Button(this,125,config.height-137,'follow',()=>{gameScene.addFollowers(1);gameScene.addEvent(gameScene.followCount,10000,true)});
+    this.followButton = new Button(this,125,config.height-137,'follow',()=>{gameScene.addFollowers(1);gameScene.eventWindow.addEvent(gameScene.followCount,10000,true)});
 
     //Graphics
     this.fillBackground();
@@ -63,13 +63,14 @@ gameScene.update = function(time,delta)
         }
         else
         {
-            this.deleteCurrentEvent();
+            this.eventWindow.deleteCurrentEvent();
             if(this.eventWindow.queue.length>0)
-                this.displayNextEvent();
+                this.eventWindow.displayNextEvent();
         }
     }
 };
 
+//Fill each window with the appropriate color
 gameScene.fillBackground = function()
 {
     this.backGraphics = this.add.graphics({ fillStyle: { color: this.windowColors[0] } });
@@ -81,6 +82,7 @@ gameScene.fillBackground = function()
     this.backGraphics.fillRectShape(new Phaser.Geom.Rectangle(this.windowPos[3][0],this.windowPos[3][1],config.width-this.windowPos[2][0],config.height-this.windowPos[3][1]));
 };
 
+//Add all of the elements in the control panel(left)
 gameScene.fillControlPanel = function()
 {
     //Text boxes
@@ -95,6 +97,7 @@ gameScene.fillControlPanel = function()
     //Buttons
     this.controlPanel.add(this.followButton);
 };
+//Add all of the elements to the tweet wall(middle)
 gameScene.fillTweetWall = function()
 {
     //List of all tweet sprites currently on the wall
@@ -175,10 +178,12 @@ gameScene.fillTweetWall = function()
         this.currentTweets.push(newTweet);
     };
 };
+//Add all of the components to the upgrades window (top right)
 gameScene.fillUpgrades = function()
 {
     this.upgrades.add(this.add.text(10,10,"Upgrades",{fill:"#000"}));
 };
+//Add all components to the events panel (bottom right)
 gameScene.fillEvents = function()
 {
     /*startTime and timer represent time in milliseconds
@@ -189,6 +194,32 @@ gameScene.fillEvents = function()
     this.eventWindow.startTime = 10000;
     this.eventWindow.timer = 0;
     this.eventWindow.queue = [];
+
+    gameScene.eventWindow.addEvent = function(text,time,onYourSide)
+    {
+        this.queue.push({
+            text:text,
+            time:time,
+            onYourSide:onYourSide
+        });
+        if(this.queue.length === 1)
+            this.displayNextEvent();
+    };
+    gameScene.eventWindow.displayNextEvent = function()
+    {
+        this.add(gameScene.add.text(10,10,this.queue[0].text,{fill:"#000"}));
+        this.startTime = this.queue[0].time;
+        this.timer = this.queue[0].time;
+        gameScene.backGraphics.fillStyle(0xbb0000);
+        gameScene.backGraphics.fillRect(gameScene.windowPos[3][0]+25,gameScene.windowPos[3][1]+150,200,25);
+    };
+    gameScene.eventWindow.deleteCurrentEvent = function()
+    {
+        this.removeAll();
+        this.queue.shift();
+        gameScene.backGraphics.fillStyle(gameScene.windowColors[2]);
+        gameScene.backGraphics.fillRect(gameScene.windowPos[3][0]+25,gameScene.windowPos[3][1]+150,200,25);
+    };
 };
 
 gameScene.addFollowers = function(num)
@@ -201,30 +232,4 @@ gameScene.changePopularity = function(num)
 {
     this.popularityScore += num;
     this.controlPanel.popularityLabel.setText(this.popularityScore);
-};
-
-gameScene.addEvent = function(text,time,onYourSide)
-{
-    this.eventWindow.queue.push({
-        text:text,
-        time:time,
-        onYourSide:onYourSide
-    });
-    if(this.eventWindow.queue.length === 1)
-        this.displayNextEvent();
-};
-gameScene.displayNextEvent = function()
-{
-    this.eventWindow.add(gameScene.add.text(10,10,this.eventWindow.queue[0].text,{fill:"#000"}));
-    this.eventWindow.startTime = this.eventWindow.queue[0].time;
-    this.eventWindow.timer = this.eventWindow.queue[0].time;
-    this.backGraphics.fillStyle(0xbb0000);
-    this.backGraphics.fillRect(gameScene.windowPos[3][0]+25,gameScene.windowPos[3][1]+150,200,25);
-};
-gameScene.deleteCurrentEvent = function()
-{
-    this.eventWindow.removeAll();
-    this.eventWindow.queue.shift();
-    this.backGraphics.fillStyle(this.windowColors[2]);
-    this.backGraphics.fillRect(gameScene.windowPos[3][0]+25,gameScene.windowPos[3][1]+150,200,25);
 };
