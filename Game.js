@@ -23,7 +23,7 @@ gameScene.preload = function()
     this.load.image('follow',"assets/FollowButton.png");
     this.load.image('anon',"assets/Anonymous.jpg");
     this.load.image('tweetBG',"assets/Blank.png");
-    //['like','retweet','reply','mute','report']
+    //['retweet','reply','mute','report']
 
     this.load.image('up arrow', "assets/up arrow.png");
     this.load.image('arrow', "assets/arrow.png");
@@ -36,6 +36,9 @@ gameScene.create = function()
     //Positions and colors of the panels
     this.windowPos = [[0,0],[250,0],[750,0],[750,300]];
     this.windowColors = [0x88ffff,0xccffff,0xf0f0f0];
+
+    //Buttons
+    this.followButton = new Button(this,125,config.height-137,'follow',()=>{gameScene.addFollowers(1);gameScene.eventWindow.addEvent(gameScene.followCount,10000,true)});
 
     //Graphics
     this.fillBackground();
@@ -66,15 +69,21 @@ gameScene.update = function(time,delta)
         this.eventWindow.timer-=delta;
         if(this.eventWindow.timer>0)
         {
-
+            this.backGraphics.fillStyle(0x444444);
+            this.backGraphics.fillRect(gameScene.windowPos[3][0]+25,gameScene.windowPos[3][1]+150,200,25);
+            this.backGraphics.fillStyle(0xbb0000);
+            this.backGraphics.fillRect(gameScene.windowPos[3][0]+25,gameScene.windowPos[3][1]+150,200*this.eventWindow.timer/this.eventWindow.startTime,25);
         }
         else
         {
-
+            this.eventWindow.deleteCurrentEvent();
+            if(this.eventWindow.queue.length>0)
+                this.eventWindow.displayNextEvent();
         }
     }
 };
 
+//Fill each window with the appropriate color
 gameScene.fillBackground = function()
 {
     this.backGraphics = this.add.graphics({ fillStyle: { color: this.windowColors[0] } });
@@ -86,6 +95,9 @@ gameScene.fillBackground = function()
     this.backGraphics.fillRectShape(new Phaser.Geom.Rectangle(this.windowPos[3][0],this.windowPos[3][1],config.width-this.windowPos[2][0],config.height-this.windowPos[3][1]));
 };
 
+/*Add all of the elements in the control panel(left)
+*Control Panel functions include:
+ */
 gameScene.fillControlPanel = function()
 {
     //Text boxes
@@ -103,7 +115,13 @@ gameScene.fillControlPanel = function()
     this.controlPanel.followerLabel = this.add.text(10,config.height-25,this.followCount,{fill:"#000"});
     this.controlPanel.add(this.controlPanel.popularityLabel);
     this.controlPanel.add(this.controlPanel.followerLabel);
+    //Buttons
+    this.controlPanel.add(this.followButton);
 };
+/*Add all of the elements to the tweet wall(middle)
+*Tweet wall fuctions include:
+* addTweet
+ */
 gameScene.fillTweetWall = function()
 {
     //List of all tweet sprites currently on the wall
@@ -126,11 +144,14 @@ gameScene.fillTweetWall = function()
                     targets:tweet,
                     duration:100,
                     y:tweet.y+tweetHeight+10,
-                    onComplete: function()
+                    onStart: function()
                     {
                         wall.currentTweets.shift();
-                        tweet.destroy();
                         i--;
+                    },
+                    onComplete: function()
+                    {
+                        tweet.destroy();
                     }
                 });
             }
@@ -146,14 +167,29 @@ gameScene.fillTweetWall = function()
         //Make the new box
         let newTweet = scene.add.container(scene.windowPos[1][0]+10,scene.windowPos[1][1]+10);
         newTweet.add(scene.add.sprite(tweetLength/2,tweetHeight/2,'tweetBG'));
-        let likeButton = scene.add.sprite(100,100,'like');
-        likeButton.setScale(.2);
-        newTweet.add(likeButton);
         let anon = scene.add.sprite(25,25,'anon');
         anon.setScale(.1171875);
         newTweet.add(anon);
         newTweet.add(scene.add.text(50,15,name,{fill:"#000"}));
         newTweet.add(scene.add.text(30,50,text,{fill:"#000"}));
+        let likeButton = new Button(scene,100,100,'like',()=>{
+            //TODO: Change in popularity should depend on intensity of opinion and how much you agree with it
+            if(scene.followCount<=25)
+                scene.changePopularity(Math.round(scene.followCount/2));
+            else
+            {
+                //Change the popularity according to a normal distribution centered around followCount/2 with standard deviation followCount/10
+                let k = scene.followCount/2;
+                let num = k;
+                for(let i=0;i<25;i++)
+                {
+                    num += (Math.round(Math.random())*2*k/25)-(k/25);
+                }
+                scene.changePopularity(Math.round(num));
+            }
+        });
+        likeButton.setScale(.2);
+        newTweet.add(likeButton);
         scene.tweens.add({
             targets:newTweet,
             duration:100,
@@ -167,10 +203,19 @@ gameScene.fillTweetWall = function()
         this.currentTweets.push(newTweet);
     };
 };
+/*Add all of the components to the upgrades window (top right)
+*Upgrade Wall functions include:
+ */
 gameScene.fillUpgrades = function()
 {
     this.upgrades.add(this.add.text(10,10,"Upgrades",{fill:"#000"}));
 };
+/*Add all components to the events panel (bottom right)
+*Event Wall Functions include:
+* addEvent
+* displayNextEvent
+* deleteCurrentEvent
+ */
 gameScene.fillEvents = function()
 {
     /*startTime and timer represent time in milliseconds
@@ -181,14 +226,45 @@ gameScene.fillEvents = function()
     this.eventWindow.startTime = 10000;
     this.eventWindow.timer = 0;
     this.eventWindow.queue = [];
+
+    //Add an event to the queue, and auto-display it if nothing else is currently playing
+    gameScene.eventWindow.addEvent = function(text,time,onYourSide)
+    {
+        this.queue.push({
+            text:text,
+            time:time,
+            onYourSide:onYourSide
+        });
+        if(this.queue.length === 1)
+            this.displayNextEvent();
+    };
+    //Display the next event. The assumption is the previous event has already been cleared
+    gameScene.eventWindow.displayNextEvent = function()
+    {
+        this.add(gameScene.add.text(10,10,this.queue[0].text,{fill:"#000"}));
+        this.startTime = this.queue[0].time;
+        this.timer = this.queue[0].time;
+        gameScene.backGraphics.fillStyle(0xbb0000);
+        gameScene.backGraphics.fillRect(gameScene.windowPos[3][0]+25,gameScene.windowPos[3][1]+150,200,25);
+    };
+    //Clears the current event, but doesn't play the next event
+    gameScene.eventWindow.deleteCurrentEvent = function()
+    {
+        this.removeAll();
+        this.queue.shift();
+        gameScene.backGraphics.fillStyle(gameScene.windowColors[2]);
+        gameScene.backGraphics.fillRect(gameScene.windowPos[3][0]+25,gameScene.windowPos[3][1]+150,200,25);
+    };
 };
 
+//Increment the follower count by the appropriate number
 gameScene.addFollowers = function(num)
 {
     this.followCount += num;
     this.controlPanel.followerLabel.setText(this.followCount);
 };
 
+//Change the user's popularity by the given number
 gameScene.changePopularity = function(num)
 {
     this.popularityScore += num;
