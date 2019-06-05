@@ -21,7 +21,7 @@ gameScene.preload = function()
     this.load.image('follow',"assets/FollowButton.png");
     this.load.image('anon',"assets/Anonymous.jpg");
     this.load.image('tweetBG',"assets/Blank.png");
-    //['like','retweet','reply','mute','report']
+    //['retweet','reply','mute','report']
 
     this.load.image('like', "assets/like.jpeg");
 
@@ -34,7 +34,7 @@ gameScene.create = function()
     this.windowColors = [0x88ffff,0xccffff,0xf0f0f0];
 
     //Buttons
-    this.followButton = new Button(this,125,config.height-137,'follow',()=>{gameScene.addFollowers(1);gameScene.tweetWall.addTweet(generateName(),"Test",gameScene);});
+    this.followButton = new Button(this,125,config.height-137,'follow',()=>{gameScene.addFollowers(1);gameScene.eventWindow.addEvent("Test",10000,true)});
 
     //Graphics
     this.fillBackground();
@@ -56,7 +56,10 @@ gameScene.update = function(time,delta)
         this.eventWindow.timer-=delta;
         if(this.eventWindow.timer>0)
         {
-
+            this.backGraphics.fillStyle(0x444444);
+            this.backGraphics.fillRect(gameScene.windowPos[3][0]+25,gameScene.windowPos[3][1]+150,200,25);
+            this.backGraphics.fillStyle(0x880000);
+            this.backGraphics.fillRect(gameScene.windowPos[3][0]+25,gameScene.windowPos[3][1]+150,200*this.eventWindow.timer/this.eventWindow.startTime,25);
         }
         else
         {
@@ -141,7 +144,8 @@ gameScene.fillTweetWall = function()
         newTweet.add(scene.add.text(50,15,name,{fill:"#000"}));
         newTweet.add(scene.add.text(30,50,text,{fill:"#000"}));
         let likeButton = new Button(scene,100,100,'like',()=>{
-            if(scene.followCount<=100)
+            //TODO: Change in popularity should depend on intensity of opinion and how much you agree with it
+            if(scene.followCount<=25)
                 scene.changePopularity(Math.round(scene.followCount/2));
             else
             {
@@ -195,4 +199,28 @@ gameScene.changePopularity = function(num)
 {
     this.popularityScore += num;
     this.controlPanel.popularityLabel.setText(this.popularityScore);
+};
+
+gameScene.eventWindow.addEvent = function(text,time,onYourSide)
+{
+    this.queue.push({
+        text:text,
+        time:time,
+        onYourSide:onYourSide
+    });
+    if(this.queue.length === 1)
+        this.displayNextEvent();
+};
+gameScene.eventWindow.displayNextEvent = function()
+{
+    this.add(gameScene.add.text(10,10,this.queue[0].text,{fill:"#000"}));
+    this.startTime = this.queue[0].time;
+    this.timer = this.queue[0].time;
+    gameScene.backGraphics.fillStyle(0x880000);
+    gameScene.backGraphics.fillRect(gameScene.windowPos[3][0]+25,gameScene.windowPos[3][1]+150,200,25);
+};
+gameScene.eventWindow.deleteCurrentEvent = function()
+{
+    this.removeAll();
+    this.queue.shift();
 };
