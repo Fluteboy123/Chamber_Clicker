@@ -39,9 +39,6 @@ gameScene.create = function()
     this.windowPos = [[0,0],[250,0],[750,0],[750,300]];
     this.windowColors = [0x88ffff,0xccffff,0xf0f0f0];
 
-    //Buttons
-    this.followButton = new Button(this,125,config.height-137,'follow',()=>{gameScene.addFollowers(1);gameScene.eventWindow.addEvent(gameScene.followCount,10000,true)});
-
     //Graphics
     this.fillBackground();
     this.controlPanel = this.add.container(this.windowPos[0][0],this.windowPos[0][1]);
@@ -54,13 +51,6 @@ gameScene.create = function()
     this.fillEvents();
 
     //Buttons
-    this.followButton = new Button(this,125,config.height-137,'follow',()=>{gameScene.addFollowers(1);gameScene.tweetWall.addTweet(generateName(),generateTweet(this.tweetAggression),gameScene);});
-    this.topicToggle = new Button(this, 125, config.height-235, 'arrow', ()=>{gameScene.changeTopic();});
-    this.upButton = new Button(this, 160, config.height - 375, 'up arrow', ()=>{gameScene.increment();});
-    this.downButton = new Button(this, 160, config.height - 300, 'down arrow', ()=>{gameScene.decrement()});
-    this.upButton.setScale(.1);
-    this.downButton.setScale(.15);
-    this.topicToggle.setScale(.25);
 };
 
 gameScene.update = function(time,delta)
@@ -124,7 +114,7 @@ gameScene.fillTweetWall = function()
     this.tweetWall.currentTweets = [];
 
     //Function for adding a tweet
-    this.tweetWall.addTweet = function(text,scene)
+    this.tweetWall.addTweet = function(name,text,scene)
     {
         //Dimensions of the box
         const tweetHeight = 150, tweetLength = scene.windowPos[2][0] - scene.windowPos[1][0] - 20;
@@ -159,7 +149,9 @@ gameScene.fillTweetWall = function()
         }
         //Make the new box
         let newTweet = scene.add.container(scene.windowPos[1][0]+10,scene.windowPos[1][1]+10);
-        newTweet.add(scene.add.sprite(tweetLength/2,tweetHeight/2,'tweetBG'));
+        let wall = scene.add.sprite(tweetLength/2,tweetHeight/2,'tweetBG');
+        wall.setScale(4.8,1.5);
+        newTweet.add(wall);
         let anon = scene.add.sprite(25,25,'anon');
         anon.setScale(.1171875);
         let likeButton = scene.add.sprite(50,120,'like');
@@ -167,12 +159,12 @@ gameScene.fillTweetWall = function()
         let replyButton = scene.add.sprite(420,120,'reply');
         makeInteractive(rtButton);
         makeInteractive(likeButton);
-        makeInteractive(replyButton)
+        makeInteractive(replyButton);
         newTweet.add(replyButton);
         newTweet.add(rtButton);
         newTweet.add(likeButton);
         newTweet.add(anon);
-        newTweet.add(scene.add.text(50,15,generateName(),{fill:"#000"}));
+        newTweet.add(scene.add.text(50,15,name,{fill:"#000"}));
         newTweet.add(scene.add.text(30,50,text,{fill:"#000"}));
         scene.tweens.add({
             targets:newTweet,
@@ -246,24 +238,24 @@ function resetItemState(item){
 
 gameScene.changeTopic = function(){
   this.topicNumber += 1;
-  if (this.topicNumber%2 == 1){
+  if (this.topicNumber%2 === 1){
     this.controlPanel.topicLabel.setText("abortion");
   }
   else{
     this.controlPanel.topicLabel.setText("Donald Trump")
   }
-}
+};
 
 gameScene.increment = function(){
   if (this.tweetAggression < 5){
     this.tweetAggression += 1;
     this.controlPanel.tweetAggressionLabel.setText(this.tweetAggression);
   }
-}
+};
 
 gameScene.decrement = function(){
   if (this.tweetAggression > -5){
     this.tweetAggression -= 1;
     this.controlPanel.tweetAggressionLabel.setText(this.tweetAggression);
   }
-}
+};
