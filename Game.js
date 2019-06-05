@@ -150,7 +150,7 @@ gameScene.fillTweetWall = function()
         //Make the new box
         let newTweet = scene.add.container(scene.windowPos[1][0]+10,scene.windowPos[1][1]+10);
         let wall = scene.add.sprite(tweetLength/2,tweetHeight/2,'tweetBG');
-        wall.setScale(4.8,1.5);
+      //  wall.setScale(4.8,1.5);
         newTweet.add(wall);
         let anon = scene.add.sprite(25,25,'anon');
         anon.setScale(.1171875);
