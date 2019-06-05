@@ -90,18 +90,19 @@ gameScene.fillControlPanel = function()
 
 
     //Text boxes that hold the game scores in them
-    this.controlPanel.topicLabel = this.add.text(60,config.height-260,"Donald Trump",{fill:"#000"});
+    this.controlPanel.topicLabel = this.add.text(60,config.height-250,"Donald Trump",{fill:"#000"});
     this.controlPanel.tweetAggressionLabel = this.add.text(35, config.height-375, this.tweetAggression, {fill: "#000"});
     this.controlPanel.tweetAggressionLabel.setScale(6);
+    this.controlPanel.tweetInstructions = this.add.text(30, config.height-450, "-5 = most liberal\n 0 = moderate\n 5 = most conservative", {fill: "#000"});
     this.controlPanel.popularityLabel = this.add.text(10,config.height-75,this.popularityScore,{fill:"#000"});
     this.controlPanel.followerLabel = this.add.text(10,config.height-25,this.followCount,{fill:"#000"});
     this.controlPanel.add(this.controlPanel.popularityLabel);
     this.controlPanel.add(this.controlPanel.followerLabel);
     //Buttons
-    this.followButton = new Button(this,125,config.height-137,'follow',()=>{gameScene.addFollowers(1);gameScene.tweetWall.addTweet("You",generateTweet(this.tweetAggression),gameScene);});
+    this.followButton = new Button(this,125,config.height-155,'follow',()=>{gameScene.addFollowers(1);gameScene.tweetWall.addTweet("You",generateTweet(this.tweetAggression),gameScene);});
     // this.followButton = new Button(this,125,config.height-137,'follow',()=>{gameScene.addFollowers(1);gameScene.eventWindow.addEvent(this.followCount,10000,true)});
-    this.topicToggle = new Button(this, 125, config.height-235, 'arrow', ()=>{gameScene.changeTopic();});
-    this.upButton = new Button(this, 160, config.height - 375, 'up arrow', ()=>{gameScene.increment();});
+    this.topicToggle = new Button(this, 125, config.height-225, 'arrow', ()=>{gameScene.changeTopic();});
+    this.upButton = new Button(this, 160, config.height - 370, 'up arrow', ()=>{gameScene.increment();});
     this.downButton = new Button(this, 160, config.height - 300, 'down arrow', ()=>{gameScene.decrement()});
     this.upButton.setScale(.1);
     this.downButton.setScale(.15);
@@ -217,7 +218,7 @@ function makeInteractive(item){
             targets: item,
             scaleX: 1.2,
             scaleY: 1.2,
-            duration: 200,
+            duration: 100,
             yoyo: true,
             ease: 'Quad.easeIn',
             onStart: function(){
