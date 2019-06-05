@@ -42,9 +42,7 @@ gameScene.create = function()
     this.fillEvents();
 
     //Buttons
-    this.followButton = new Button(this,125,config.height-137,'follow',()=>{gameScene.addFollowers(1);});
-    this.followButton.setInteractive();
-    this.followButton.on('pointerdown',()=>{gameScene.addFollowers(1);gameScene.tweetWall.addTweet("Test",gameScene);});
+    this.followButton = new Button(this,125,config.height-137,'follow',()=>{gameScene.addFollowers(1);gameScene.tweetWall.addTweet(generateName(),"Test",gameScene);});
 };
 
 gameScene.update = function(time,delta)
@@ -93,7 +91,7 @@ gameScene.fillTweetWall = function()
     this.tweetWall.currentTweets = [];
 
     //Function for adding a tweet
-    this.tweetWall.addTweet = function(text,scene)
+    this.tweetWall.addTweet = function(name,text,scene)
     {
         //Dimensions of the box
         const tweetHeight = 150, tweetLength = scene.windowPos[2][0] - scene.windowPos[1][0] - 20;
@@ -132,7 +130,7 @@ gameScene.fillTweetWall = function()
         let anon = scene.add.sprite(25,25,'anon');
         anon.setScale(.1171875);
         newTweet.add(anon);
-        newTweet.add(scene.add.text(50,15,generateName(),{fill:"#000"}));
+        newTweet.add(scene.add.text(50,15,name,{fill:"#000"}));
         newTweet.add(scene.add.text(30,50,text,{fill:"#000"}));
         scene.tweens.add({
             targets:newTweet,

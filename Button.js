@@ -7,7 +7,8 @@ class Button extends Phaser.GameObjects.Sprite{
         //this.cursorInput = cursorInput;
         //this.setImmovable();
         //Function called when the button is clicked
-        this.clickFunction = clickFunction;
+        this.setInteractive();
+        this.on('pointerdown',clickFunction);
     }
 
 }
