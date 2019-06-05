@@ -27,6 +27,9 @@ gameScene.preload = function()
     this.load.image('retweet',"assets/Retweet.png");
     this.load.image('reply',"assets/Reply.jpg");
 
+    this.load.image('up arrow', "assets/up arrow.png");
+    this.load.image('arrow', "assets/arrow.png");
+    this.load.image('down arrow', "assets/down arrow.png");
     //['like','retweet','reply','mute','report']
 };
 
