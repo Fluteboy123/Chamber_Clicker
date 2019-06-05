@@ -14,6 +14,8 @@ gameScene.init = function()
 {
     this.followCount = 0;
     this.popularityScore = 0;
+    this.topicNumber = 0;
+    this.tweetAggression = 0;
 };
 
 gameScene.preload = function()
@@ -23,7 +25,9 @@ gameScene.preload = function()
     this.load.image('tweetBG',"assets/Blank.png");
     //['like','retweet','reply','mute','report']
 
-    this.load.image('like', "assets/like.jpeg");
+    this.load.image('up arrow', "assets/up arrow.png");
+    this.load.image('arrow', "assets/arrow.png");
+    this.load.image('down arrow', "assets/down arrow.png");
 
 };
 
@@ -45,7 +49,13 @@ gameScene.create = function()
     this.fillEvents();
 
     //Buttons
-    this.followButton = new Button(this,125,config.height-137,'follow',()=>{gameScene.addFollowers(1);gameScene.tweetWall.addTweet(generateName(),"Test",gameScene);});
+    this.followButton = new Button(this,125,config.height-137,'follow',()=>{gameScene.addFollowers(1);gameScene.tweetWall.addTweet(generateName(),generateTweet(this.tweetAggression),gameScene);});
+    this.topicToggle = new Button(this, 125, config.height-235, 'arrow', ()=>{gameScene.changeTopic();});
+    this.upButton = new Button(this, 160, config.height - 375, 'up arrow', ()=>{gameScene.increment();});
+    this.downButton = new Button(this, 160, config.height - 300, 'down arrow', ()=>{gameScene.decrement()});
+    this.upButton.setScale(.1);
+    this.downButton.setScale(.15);
+    this.topicToggle.setScale(.25);
 };
 
 gameScene.update = function(time,delta)
@@ -82,7 +92,13 @@ gameScene.fillControlPanel = function()
     this.controlPanel.add(this.add.text(10,10,"Tweet",{fill:"#000"}));
     this.controlPanel.add(this.add.text(10,config.height-100,"Popularity",{fill:"#000"}));
     this.controlPanel.add(this.add.text(10,config.height-50,"Followers",{fill:"#000"}));
-    //Text boxes that hold the game scores in them
+
+
+//Text boxes that hold the game scores in them
+    this.controlPanel.topicLabel = this.add.text(60,config.height-260,"Donald Trump",{fill:"#000"});
+    this.controlPanel.tweetAggressionLabel = this.add.text(35, config.height-375, this.tweetAggression, {fill: "#000"});
+    this.controlPanel.tweetAggressionLabel.setScale(6);
+
     this.controlPanel.popularityLabel = this.add.text(10,config.height-75,this.popularityScore,{fill:"#000"});
     this.controlPanel.followerLabel = this.add.text(10,config.height-25,this.followCount,{fill:"#000"});
     this.controlPanel.add(this.controlPanel.popularityLabel);
@@ -178,3 +194,27 @@ gameScene.changePopularity = function(num)
     this.popularityScore += num;
     this.controlPanel.popularityLabel.setText(this.popularityScore);
 };
+
+gameScene.changeTopic = function(){
+  this.topicNumber += 1;
+  if (this.topicNumber%2 == 1){
+    this.controlPanel.topicLabel.setText("abortion");
+  }
+  else{
+    this.controlPanel.topicLabel.setText("Donald Trump")
+  }
+}
+
+gameScene.increment = function(){
+  if (this.tweetAggression < 5){
+    this.tweetAggression += 1;
+    this.controlPanel.tweetAggressionLabel.setText(this.tweetAggression);
+  }
+}
+
+gameScene.decrement = function(){
+  if (this.tweetAggression > -5){
+    this.tweetAggression -= 1;
+    this.controlPanel.tweetAggressionLabel.setText(this.tweetAggression);
+  }
+}
