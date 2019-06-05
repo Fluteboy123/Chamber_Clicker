@@ -14,6 +14,8 @@ gameScene.init = function()
 {
     this.followCount = 0;
     this.popularityScore = 0;
+    this.topicNumber = 0;
+    this.tweetAggression = 0;
 };
 
 gameScene.preload = function()
@@ -237,4 +239,28 @@ function resetItemState(item){
         item.onClickTween.remove();
     }
 
+}
+
+gameScene.changeTopic = function(){
+  this.topicNumber += 1;
+  if (this.topicNumber%2 == 1){
+    this.controlPanel.topicLabel.setText("abortion");
+  }
+  else{
+    this.controlPanel.topicLabel.setText("Donald Trump")
+  }
+}
+
+gameScene.increment = function(){
+  if (this.tweetAggression < 5){
+    this.tweetAggression += 1;
+    this.controlPanel.tweetAggressionLabel.setText(this.tweetAggression);
+  }
+}
+
+gameScene.decrement = function(){
+  if (this.tweetAggression > -5){
+    this.tweetAggression -= 1;
+    this.controlPanel.tweetAggressionLabel.setText(this.tweetAggression);
+  }
 }
