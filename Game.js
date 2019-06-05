@@ -34,6 +34,9 @@ gameScene.create = function()
     this.windowPos = [[0,0],[250,0],[750,0],[750,300]];
     this.windowColors = [0x88ffff,0xccffff,0xf0f0f0];
 
+    //Buttons
+    this.followButton = new Button(this,125,config.height-137,'follow',()=>{gameScene.addFollowers(1);gameScene.eventWindow.addEvent(gameScene.followCount,10000,true)});
+
     //Graphics
     this.fillBackground();
     this.controlPanel = this.add.container(this.windowPos[0][0],this.windowPos[0][1]);
@@ -44,6 +47,15 @@ gameScene.create = function()
     this.fillTweetWall();
     this.fillUpgrades();
     this.fillEvents();
+
+    //Buttons
+    this.followButton = new Button(this,125,config.height-137,'follow',()=>{gameScene.addFollowers(1);gameScene.tweetWall.addTweet(generateName(),generateTweet(this.tweetAggression),gameScene);});
+    this.topicToggle = new Button(this, 125, config.height-235, 'arrow', ()=>{gameScene.changeTopic();});
+    this.upButton = new Button(this, 160, config.height - 375, 'up arrow', ()=>{gameScene.increment();});
+    this.downButton = new Button(this, 160, config.height - 300, 'down arrow', ()=>{gameScene.decrement()});
+    this.upButton.setScale(.1);
+    this.downButton.setScale(.15);
+    this.topicToggle.setScale(.25);
 };
 
 gameScene.update = function(time,delta)
@@ -85,19 +97,8 @@ gameScene.fillControlPanel = function()
     this.controlPanel.followerLabel = this.add.text(10,config.height-25,this.followCount,{fill:"#000"});
     this.controlPanel.add(this.controlPanel.popularityLabel);
     this.controlPanel.add(this.controlPanel.followerLabel);
-
     //Buttons
-    this.followButton = new Button(this,125,config.height-137,'follow',()=>{gameScene.addFollowers(1);gameScene.tweetWall.addTweet("You",generateTweet(this.tweetAggression),gameScene);});
-    this.topicToggle = new Button(this, 125, config.height-235, 'arrow', ()=>{gameScene.changeTopic();});
-    this.upButton = new Button(this, 160, config.height - 375, 'up arrow', ()=>{gameScene.increment();});
-    this.downButton = new Button(this, 160, config.height - 300, 'down arrow', ()=>{gameScene.decrement()});
-    this.upButton.setScale(.1);
-    this.downButton.setScale(.15);
-    this.topicToggle.setScale(.25);
     this.controlPanel.add(this.followButton);
-    this.controlPanel.add(this.topicToggle);
-    this.controlPanel.add(this.upButton);
-    this.controlPanel.add(this.downButton);
 };
 gameScene.fillTweetWall = function()
 {
@@ -140,9 +141,7 @@ gameScene.fillTweetWall = function()
         }
         //Make the new box
         let newTweet = scene.add.container(scene.windowPos[1][0]+10,scene.windowPos[1][1]+10);
-        let wall = scene.add.sprite(tweetLength/2,tweetHeight/2,'tweetBG');
-        wall.setScale(4.8,1.5);
-        newTweet.add(wall);
+        newTweet.add(scene.add.sprite(tweetLength/2,tweetHeight/2,'tweetBG'));
         let anon = scene.add.sprite(25,25,'anon');
         anon.setScale(.1171875);
         let likeButton = scene.add.sprite(50,120,'like');
