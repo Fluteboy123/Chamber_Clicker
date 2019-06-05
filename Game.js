@@ -33,6 +33,9 @@ gameScene.create = function()
     this.windowPos = [[0,0],[250,0],[750,0],[750,300]];
     this.windowColors = [0x88ffff,0xccffff,0xf0f0f0];
 
+    //Buttons
+    this.followButton = new Button(this,125,config.height-137,'follow',()=>{gameScene.addFollowers(1);gameScene.tweetWall.addTweet(generateName(),"Test",gameScene);});
+
     //Graphics
     this.fillBackground();
     this.controlPanel = this.add.container(this.windowPos[0][0],this.windowPos[0][1]);
@@ -43,9 +46,6 @@ gameScene.create = function()
     this.fillTweetWall();
     this.fillUpgrades();
     this.fillEvents();
-
-    //Buttons
-    this.followButton = new Button(this,125,config.height-137,'follow',()=>{gameScene.addFollowers(1);gameScene.tweetWall.addTweet(generateName(),"Test",gameScene);});
 };
 
 gameScene.update = function(time,delta)
@@ -87,6 +87,8 @@ gameScene.fillControlPanel = function()
     this.controlPanel.followerLabel = this.add.text(10,config.height-25,this.followCount,{fill:"#000"});
     this.controlPanel.add(this.controlPanel.popularityLabel);
     this.controlPanel.add(this.controlPanel.followerLabel);
+    //Buttons
+    this.controlPanel.add(this.followButton);
 };
 gameScene.fillTweetWall = function()
 {
@@ -110,11 +112,14 @@ gameScene.fillTweetWall = function()
                     targets:tweet,
                     duration:100,
                     y:tweet.y+tweetHeight+10,
-                    onComplete: function()
+                    onStart: function()
                     {
                         wall.currentTweets.shift();
-                        tweet.destroy();
                         i--;
+                    },
+                    onComplete: function()
+                    {
+                        tweet.destroy();
                     }
                 });
             }
@@ -130,14 +135,27 @@ gameScene.fillTweetWall = function()
         //Make the new box
         let newTweet = scene.add.container(scene.windowPos[1][0]+10,scene.windowPos[1][1]+10);
         newTweet.add(scene.add.sprite(tweetLength/2,tweetHeight/2,'tweetBG'));
-        let likeButton = scene.add.sprite(100,100,'like');
-        likeButton.setScale(.2);
-        newTweet.add(likeButton);
         let anon = scene.add.sprite(25,25,'anon');
         anon.setScale(.1171875);
         newTweet.add(anon);
         newTweet.add(scene.add.text(50,15,name,{fill:"#000"}));
         newTweet.add(scene.add.text(30,50,text,{fill:"#000"}));
+        let likeButton = new Button(scene,100,100,'like',()=>{
+            if(scene.followCount<=100)
+                scene.changePopularity(Math.round(scene.followCount/2));
+            else
+            {
+                let k = scene.followCount/2;
+                let num = k;
+                for(let i=0;i<25;i++)
+                {
+                    num += (Math.round(Math.random())*2*k/25)-(k/25);
+                }
+                scene.changePopularity(Math.round(num));
+            }
+        });
+        likeButton.setScale(.2);
+        newTweet.add(likeButton);
         scene.tweens.add({
             targets:newTweet,
             duration:100,
