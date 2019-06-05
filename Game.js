@@ -94,11 +94,10 @@ gameScene.fillControlPanel = function()
     this.controlPanel.add(this.add.text(10,config.height-50,"Followers",{fill:"#000"}));
 
 
-//Text boxes that hold the game scores in them
+    //Text boxes that hold the game scores in them
     this.controlPanel.topicLabel = this.add.text(60,config.height-260,"Donald Trump",{fill:"#000"});
     this.controlPanel.tweetAggressionLabel = this.add.text(35, config.height-375, this.tweetAggression, {fill: "#000"});
     this.controlPanel.tweetAggressionLabel.setScale(6);
-
     this.controlPanel.popularityLabel = this.add.text(10,config.height-75,this.popularityScore,{fill:"#000"});
     this.controlPanel.followerLabel = this.add.text(10,config.height-25,this.followCount,{fill:"#000"});
     this.controlPanel.add(this.controlPanel.popularityLabel);
@@ -106,6 +105,7 @@ gameScene.fillControlPanel = function()
 
     //Buttons
     this.followButton = new Button(this,125,config.height-137,'follow',()=>{gameScene.addFollowers(1);gameScene.tweetWall.addTweet("You",generateTweet(this.tweetAggression),gameScene);});
+    // this.followButton = new Button(this,125,config.height-137,'follow',()=>{gameScene.addFollowers(1);gameScene.eventWindow.addEvent(this.followCount,10000,true)});
     this.topicToggle = new Button(this, 125, config.height-235, 'arrow', ()=>{gameScene.changeTopic();});
     this.upButton = new Button(this, 160, config.height - 375, 'up arrow', ()=>{gameScene.increment();});
     this.downButton = new Button(this, 160, config.height - 300, 'down arrow', ()=>{gameScene.decrement()});
