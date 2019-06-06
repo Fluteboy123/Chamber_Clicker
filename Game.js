@@ -33,6 +33,9 @@ gameScene.preload = function()
     this.load.image('arrow', "assets/arrow.png");
     this.load.image('down arrow', "assets/down arrow.png");
     this.load.image('tweet', "assets/tweet.png");
+    this.load.image('verify', "assets/Verify.png")
+    this.load.image('verify2', "assets/Verify2.png")
+
     //['like','retweet','reply','mute','report']
 };
 
@@ -316,10 +319,12 @@ gameScene.fillTweetWall = function()
 };
 gameScene.fillUpgrades = function()
 {
+    //upgrade labels
     this.upgrades.add(this.add.text(10,10,"Upgrades",{fill:"#000"}));
-    this.upgrades.add(this.add.text(10,120,"Cost: 20 Popularity",{fill:"#000"}));
+    this.upgrades.add(this.add.text(30,125,"Cost: 20 Popularity",{fill:"#000"}));
     this.upgrades.botLabel = this.add.text(125,70,this.botCount,{fill:"#000"});
     this.upgrades.add(this.upgrades.botLabel);
+    this.upgrades.add(this.add.text(25,265,"Cost: 1000 Popularity",{fill:"#000"}));
 
     //Bot Logo Logic
     let botLogo = this.add.sprite(50,75,'bot');
@@ -329,7 +334,16 @@ gameScene.fillUpgrades = function()
     botLogo.on('pointerout',() => botLogo.setTexture('bot'));
     botLogo.on('pointerdown', () => this.addBots(1));
 
+    //Verify botLogo
+    let vLogo = this.add.sprite(125,210,'verify');
+    vLogo.setInteractive();
+    this.upgrades.add(vLogo);
+    vLogo.on('pointerdown', () => this.getVerified(vLogo));
+    buttonTween(vLogo);
 };
+
+
+
 gameScene.fillEvents = function()
 {
     /*startTime and timer represent time in milliseconds
@@ -520,6 +534,20 @@ function makeInteractive(item, num){
             }
         });
     });
+    item.on('pointerover',function(pointer){
+      item.onHoverTween = gameScene.tweens.add({
+          targets:item,
+          duration: 100,
+          alpha: {
+          getStart: () => 1,
+          getEnd: () => 0.5},
+          ease: 'Quad.easeIn',
+        })
+      })
+
+      item.on('pointerout',function(pointer){
+          resetItemState(item);
+        })
 
 }
 
@@ -540,19 +568,19 @@ function buttonTween(item){
       });
   });
   item.on('pointerover',function(pointer){
-    resetItemState(item);
     item.onHoverTween = gameScene.tweens.add({
         targets:item,
-        duration: 100,
+        duration: 0,
         alpha: {
         getStart: () => 0.5,
-        getEnd: () => 1},
+        getEnd: () => 0.5},
         ease: 'Quad.easeIn',
-        OnStart: function(){
-          item.setAlpha(1);
-        }
       })
     })
+
+    item.on('pointerout',function(pointer){
+        resetItemState(item);
+      })
 }
 
 function resetItemState(item){
@@ -562,7 +590,7 @@ function resetItemState(item){
     }
 
     if(item.onHoverTween){
-      item.onHoverTween.remove;
+      item.setAlpha(1);
     }
 
 }
@@ -618,3 +646,13 @@ function randoTweet(){
     let topic = Math.floor(Math.random()*3), intensity = Math.floor(Math.random()*11)-5;
     this.tweetWall.addTweet(generateName(),generateTweet(intensity,topic),intensity,gameScene);
 }
+
+gameScene.getVerified = function(item){
+
+  if(this.popularityScore > 99){
+    this.popularityScore -= 100;
+    this.controlPanel.popularityLabel.setText(this.popularityScore);
+    item.setTexture('verify2');
+  }
+
+  }
