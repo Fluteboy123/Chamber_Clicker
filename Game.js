@@ -57,7 +57,7 @@ gameScene.create = function()
     botTimer = this.time.addEvent({delay: 5000,callback: botFollow, callbackScope: this, loop: true});
 
     //timer for random spawning of other tweets
-    tweetTimer = this.time.addEvent({delay: 8000, callback: randoTweet, callbackScope: this, loop: true});
+    tweetTimer = this.time.addEvent({delay: tweetdelay(this.followCount), callback: randoTweet, callbackScope: this, loop: true});
 
 
     //Buttons
@@ -799,5 +799,10 @@ function normalDist(num)
 
 function randoTweet(){
     let topic = Math.floor(Math.random()*3), intensity = Math.floor(Math.random()*11)-5;
-    this.tweetWall.addTweet(generateName(),generateTweet(intensity,topic),intensity,gameScene);
+    this.tweetWall.addRandomTweet(generateName(),generateTweet(intensity,topic),intensity,gameScene);
+}
+
+function tweetdelay(count){
+  let ret = 10000 - (count * 25);
+  return ret;
 }
