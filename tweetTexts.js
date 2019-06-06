@@ -1,30 +1,30 @@
 function generateTweet(num, topic){
   var tweets = [];
   if (topic === 0){
-    tweets = ["Right to lifers are hypocritical moral cowards and we’ll all be better off when they’re dead",
-"Republicans will defend you until you’re born, but after that don’t expect any handouts",
-"Men shouldn’t even be allowed to talk about abortions, it’s not their problem",
-"I just don’t understand how people prioritize fetuses over their LIVING MOTHERS",
-"People have the right to decide what to do with their own bodies",
-"*cute dog picture because a rational person doesn’t tweet about abortion*",
-"People should be allowed abortions in cases of rape or incest, but doing it whenever they want is such a slippery slope",
-"I can’t believe that liberals are so okay with ending an innocent potential life",
-"This fight for abortion shows how far the American moral compass has degenerated",
-"Feminazis and libtards need to get it through their thick skulls that they have no right to play God",
+    tweets = ["Right to lifers are hypocritical moral cowards\n and we’ll all be better off when they’re dead",
+"Republicans will defend you until you’re born,\n but after that don’t expect any handouts",
+"Men shouldn’t even be allowed to talk about\n abortions, it’s not their problem",
+"I just don’t understand how people prioritize\n fetuses over their LIVING MOTHERS",
+"People have the right to decide what to do with\ntheir own bodies",
+"*cute dog picture because a rational person\ndoesn’t tweet about abortion*",
+"People should be allowed abortions in cases of\nrape or incest, but doing it whenever they want\nis such a slippery slope",
+"I can’t believe that liberals are so okay with \nending an innocent potential life",
+"This fight for abortion shows how far the \nAmerican moral compass has degenerated",
+"Feminazis and libtards need to get it through \ntheir thick skulls that they have no right to \nplay God",
 "Abortion is the biggest genocide in the history\n of the Earth, MUCH WORSE THAN THE HOLOCAUST" ]
   }
   else if (topic === 1){
-    tweets = ["You better watch your fucking ass Trump, I bought a gun and I’m coming for your head.",
-"Every day a predatorial, sociopathic, dumbass pig is our president, I get closer to moving to Canada.",
-"I think that it’s ridiculous that the Mueller report is still unavailable to the public!",
+    tweets = ["You better watch your fucking ass Trump, I \nbought a gun and I’m coming for your head.",
+"Every day a predatorial, sociopathic, dumbass \npig is our president, I get closer to moving to \nCanada.",
+"I think that it’s ridiculous that the Mueller \nreport is still unavailable to the public!",
 "#AnyoneButTrump2020",
-"Is anyone else concerned that the President has dementia?",
-"I’m so sick of all of the posts about Trump, just move on already.",
-"I don’t know why those Brits are so ungrateful, Trump is doing a good job.",
+"Is anyone else concerned that the President has \ndementia?",
+"I’m so sick of all of the posts about Trump, \njust move on already.",
+"I don’t know why those Brits are so ungrateful, \nTrump is doing a good job.",
 "Just donated to the Border Wall GoFundMe!",
-"Can’t believe that they’re still trying to impeach POTUS, he clearly did nothing wrong",
-"Those libtards need to stop complaining and finally see how much better our country is now",
-"Thank GOD WE HAVE a BUSINESS MAN SAVING OUR COUNTRY. OBAMA’S A MONKEY, HILLARYS THE DEVIL, FUCK BERNIE #MAGA#MAGA"]
+"Can’t believe that they’re still trying to \nimpeach POTUS, he clearly did nothing wrong",
+"Those snowflakes need to stop complaining and \nfinally see how much better our country is now",
+"Thank GOD WE HAVE a BUSINESS MAN SAVING OUR \nCOUNTRY. OBAMA’S A MONKEY, HILLARYS THE DEVIL, \nFUCK BERNIE #MAGA#MAGA"]
   }
   else if (topic === 2){
     tweets = ["If you haven’t already gone vegan, you might as well kill yourself and fertilize the plants for the rest of us",
