@@ -62,11 +62,16 @@ gameScene.update = function(time,delta)
         this.eventWindow.timer-=delta;
         if(this.eventWindow.timer>0)
         {
-
+            this.backGraphics.fillStyle(0x444444);
+            this.backGraphics.fillRect(gameScene.windowPos[3][0]+25,gameScene.windowPos[3][1]+150,200,25);
+            this.backGraphics.fillStyle(0xbb0000);
+            this.backGraphics.fillRect(gameScene.windowPos[3][0]+25,gameScene.windowPos[3][1]+150,200*this.eventWindow.timer/this.eventWindow.startTime,25);
         }
         else
         {
-
+            this.eventWindow.deleteCurrentEvent();
+            if(this.eventWindow.queue.length>0)
+                this.eventWindow.displayNextEvent();
         }
     }
 };
@@ -198,6 +203,35 @@ gameScene.fillEvents = function()
     this.eventWindow.startTime = 10000;
     this.eventWindow.timer = 0;
     this.eventWindow.queue = [];
+
+    //Add an event to the queue, and auto-display it if nothing else is currently playing
+    gameScene.eventWindow.addEvent = function(text,time,onYourSide)
+    {
+        this.queue.push({
+            text:text,
+            time:time,
+            onYourSide:onYourSide
+        });
+        if(this.queue.length === 1)
+            this.displayNextEvent();
+    };
+    //Display the next event. The assumption is the previous event has already been cleared
+    gameScene.eventWindow.displayNextEvent = function()
+    {
+        this.add(gameScene.add.text(10,10,this.queue[0].text,{fill:"#000"}));
+        this.startTime = this.queue[0].time;
+        this.timer = this.queue[0].time;
+        gameScene.backGraphics.fillStyle(0xbb0000);
+        gameScene.backGraphics.fillRect(gameScene.windowPos[3][0]+25,gameScene.windowPos[3][1]+150,200,25);
+    };
+    //Clears the current event, but doesn't play the next event
+    gameScene.eventWindow.deleteCurrentEvent = function()
+    {
+        this.removeAll();
+        this.queue.shift();
+        gameScene.backGraphics.fillStyle(gameScene.windowColors[2]);
+        gameScene.backGraphics.fillRect(gameScene.windowPos[3][0]+25,gameScene.windowPos[3][1]+150,200,25);
+    };
 };
 
 gameScene.addFollowers = function(num)
