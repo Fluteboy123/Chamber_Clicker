@@ -17,6 +17,7 @@ gameScene.init = function()
     this.botCount = 0;
     this.topicNumber = 0;
     this.tweetAggression = 0;
+    this.gameTime = 0;
 };
 
 gameScene.preload = function()
@@ -59,9 +60,11 @@ gameScene.create = function()
     //gives followers based on amount of bots owned
     botTimer = this.time.addEvent({delay: 5000,callback: botFollow, callbackScope: this, loop: true});
 
-    tweetTimer = this.time.addEvent({delay: 8000, callback: randoTweet, callbackScope: this, loop: true});
+    //timer for random spawning of other tweets
+    tweetTimer = this.time.addEvent({delay: tweetdelay(this.followCount), callback: randoTweet, callbackScope: this, loop: true});
 
-
+    // game clock
+    gameClock = this.time.addEvent({delay: 1000, callback: addTime, callbackScope: this, loop: true});
     //Buttons
 };
 
@@ -85,6 +88,7 @@ gameScene.update = function(time,delta)
                 this.eventWindow.displayNextEvent();
         }
     }
+
 };
 
 gameScene.fillBackground = function()
@@ -115,7 +119,8 @@ gameScene.fillControlPanel = function()
     this.controlPanel.followerLabel = this.add.text(10,config.height-25,this.followCount,{fill:"#000"});
     this.controlPanel.add(this.controlPanel.popularityLabel);
     this.controlPanel.add(this.controlPanel.followerLabel);
-    //Buttons
+
+    //Follow 4 Follow Button
     this.followButton = new Button(this,180,config.height-60,'follow',()=>{gameScene.addFollowers(1),gameScene;});
     // this.followButton = new Button(this,125,config.height-137,'follow',()=>{gameScene.addFollowers(1);gameScene.eventWindow.addEvent(this.followCount,10000,true)});
     this.tweetButton = new Button(this, 125, config.height-145, 'tweet', ()=>{gameScene.tweetWall.addTweet("You",generateTweet(this.tweetAggression, this.topicNumber), this.tweetAggression, gameScene);});
@@ -168,6 +173,8 @@ gameScene.fillTweetWall = function()
                 });
             }
         }
+
+
         //Make the new box
         let newTweet = scene.add.container(scene.windowPos[1][0]+10,scene.windowPos[1][1]+10);
         let wall = scene.add.sprite(tweetLength/2,tweetHeight/2,'tweetBG');
@@ -175,15 +182,6 @@ gameScene.fillTweetWall = function()
         newTweet.add(wall);
         let anon = scene.add.sprite(25,25,'anon');
         anon.setScale(.1171875);
-        let likeButton = scene.add.sprite(50,120,'like');
-        let rtButton = scene.add.sprite(240,120,'retweet');
-        let replyButton = scene.add.sprite(420,120,'reply');
-        makeInteractive(rtButton, intensity);
-        makeInteractive(likeButton, intensity);
-        makeInteractive(replyButton, intensity);
-        newTweet.add(replyButton);
-        newTweet.add(rtButton);
-        newTweet.add(likeButton);
         newTweet.add(anon);
         newTweet.add(scene.add.text(50,15,name,{fill:"#000"}));
         newTweet.add(scene.add.text(30,50,text,{fill:"#000"}));
@@ -197,13 +195,18 @@ gameScene.fillTweetWall = function()
             scaleX:1,
             scaleY:1
         });
+
+
         this.currentTweets.push(newTweet);
         //Change following with respect to current following and polarity
-        switch(Math.floor(Math.log10(gameScene.followCount+0.1000001)))
+        switch(Math.floor(Math.log(gameScene.followCount+0.1000001)))
         {
             case -1:
                 if(Math.abs(intensity)<2)
+                {
                     gameScene.addFollowers(1);
+                    gameScene.changePopularity(1);
+                }
                 break;
             case 0:
                 switch(Math.abs(intensity))
@@ -316,7 +319,76 @@ gameScene.fillTweetWall = function()
         }
         gameScene.controlPanel.followerLabel.setText(gameScene.followCount);
     };
+
+    //Function for adding a tweet
+    this.tweetWall.addRandomTweet = function(name,text,intensity,scene)
+    {
+        //Dimensions of the box
+        const tweetHeight = 150, tweetLength = scene.windowPos[2][0] - scene.windowPos[1][0] - 20;
+        //For every current container on the panel
+        for(let i=0;i<this.currentTweets.length;i++)
+        {
+            let tweet = this.currentTweets[i];
+            //If the box will end up off of the screen
+            if(tweet.y + tweetHeight+10>=config.height)
+            {
+                const wall = this;
+                scene.tweens.add({
+                    targets:tweet,
+                    duration:100,
+                    y:tweet.y+tweetHeight+10,
+                    onComplete: function()
+                    {
+                        wall.currentTweets.shift();
+                        tweet.destroy();
+                        i--;
+                    }
+                });
+            }
+            else
+            {
+                scene.tweens.add({
+                    targets:tweet,
+                    duration:100,
+                    y:tweet.y+tweetHeight+10
+                });
+            }
+        }
+        //Make the new box
+        let newTweet = scene.add.container(scene.windowPos[1][0]+10,scene.windowPos[1][1]+10);
+        let wall = scene.add.sprite(tweetLength/2,tweetHeight/2,'tweetBG');
+      //  wall.setScale(4.8,1.5);
+        newTweet.add(wall);
+        let anon = scene.add.sprite(25,25,'anon');
+        anon.setScale(.1171875);
+        let likeButton = scene.add.sprite(50,120,'like');
+        let rtButton = scene.add.sprite(240,120,'retweet');
+        let replyButton = scene.add.sprite(420,120,'reply');
+        makeInteractive(rtButton, intensity);
+        makeInteractive(likeButton, intensity);
+        makeInteractive(replyButton, intensity);
+        newTweet.add(replyButton);
+        newTweet.add(rtButton);
+        newTweet.add(likeButton);
+        newTweet.add(anon);
+        newTweet.add(scene.add.text(50,15,name,{fill:"#000"}));
+        newTweet.add(scene.add.text(30,50,text,{fill:"#000"}));
+        scene.tweens.add({
+            targets:newTweet,
+            duration:100,
+            onStart:function()
+            {
+                newTweet.setScale(0);
+            },
+            scaleX:1,
+            scaleY:1
+        });
+        this.currentTweets.push(newTweet);
+
+        gameScene.controlPanel.followerLabel.setText(gameScene.followCount);
+      }
 };
+
 gameScene.fillUpgrades = function()
 {
     //upgrade labels
@@ -383,11 +455,16 @@ gameScene.fillEvents = function()
         gameScene.backGraphics.fillStyle(gameScene.windowColors[2]);
         gameScene.backGraphics.fillRect(gameScene.windowPos[3][0]+25,gameScene.windowPos[3][1]+150,200,25);
     };
+
+    this.eventWindow.goalLabel = this.add.text(750, config.height-200, "Prototype: Get verified as \nquickly as possible", {fill: "#000"});
+    this.eventWindow.clock = this.add.text(750, config.height-150, "Elapsed time: " + this.gameTime, {fill: "#000"});
 };
 
 gameScene.addFollowers = function(num)
 {
     this.followCount += num;
+    if(this.followCount<0)
+        this.followCount = 0;
     this.controlPanel.followerLabel.setText(this.followCount);
 };
 
@@ -405,6 +482,8 @@ gameScene.addBots = function(num)
 gameScene.changePopularity = function(num)
 {
     this.popularityScore += num;
+    if(this.popularityScore<0)
+        this.popularityScore = 0;
     this.controlPanel.popularityLabel.setText(this.popularityScore);
 };
 
@@ -415,7 +494,7 @@ function makeInteractive(item, num){
         if(num===0)
             gameScene.changePopularity(1);
         else {
-            switch (Math.floor(Math.log10(gameScene.followCount + 0.1000001))) {
+            switch (Math.floor(Math.log(gameScene.followCount + 0.1000001))) {
                 case -1:
                     if (Math.abs(num) < 2)
                         gameScene.changePopularity(1);
@@ -423,10 +502,10 @@ function makeInteractive(item, num){
                 case 0:
                     switch (Math.abs(num)) {
                         case 3:
-                            gameScene.changePopularity(-1);
+                            gameScene.changePopularity(-5);
                             break;
                         case 4:
-                            gameScene.changePopularity(-Math.ceil(gameScene.popularityScore / 2));
+                            gameScene.changePopularity(-5);
                             break;
                         case 5:
                             gameScene.changePopularity(-1 * gameScene.popularityScore);
@@ -438,13 +517,13 @@ function makeInteractive(item, num){
                 case 1:
                     switch (Math.abs(num)) {
                         case 1:
-                            gameScene.changePopularity(Math.round(gameScene.popularityScore / 10));
+                            gameScene.changePopularity(1);
                             break;
                         case 4:
-                            gameScene.changePopularity(-Math.ceil(gameScene.popularityScore / 4));
+                            gameScene.changePopularity(-10);
                             break;
                         case 5:
-                            gameScene.changePopularity(-Math.ceil(gameScene.popularityScore / 2));
+                            gameScene.changePopularity(-10);
                             break;
                         default:
                             break;
@@ -453,13 +532,13 @@ function makeInteractive(item, num){
                 case 2:
                     switch (Math.abs(num)) {
                         case 1:
-                            gameScene.changePopularity(Math.round(normalDist(gameScene.popularityScore / 10)));
+                            gameScene.changePopularity(Math.round(normalDist(1)));
                             break;
                         case 2:
-                            gameScene.changePopularity(Math.round(normalDist(gameScene.popularityScore / 20)));
+                            gameScene.changePopularity(Math.round(normalDist(5)));
                             break;
                         case 5:
-                            gameScene.changePopularity(-Math.ceil(normalDist(gameScene.popularityScore / 10)));
+                            gameScene.changePopularity(-Math.ceil(normalDist(20)));
                             break;
                         default:
                             break;
@@ -468,16 +547,16 @@ function makeInteractive(item, num){
                 case 3:
                     switch (Math.abs(num)) {
                         case 1:
-                            gameScene.changePopularity(Math.round(normalDist(gameScene.popularityScore / 50)));
+                            gameScene.changePopularity(Math.round(normalDist(1)));
                             break;
                         case 2:
-                            gameScene.changePopularity(Math.round(normalDist(gameScene.popularityScore / 10)));
+                            gameScene.changePopularity(Math.round(normalDist(5)));
                             break;
                         case 3:
-                            gameScene.changePopularity(Math.round(normalDist(gameScene.popularityScore / 20)));
+                            gameScene.changePopularity(Math.round(normalDist(10)));
                             break;
                         case 5:
-                            gameScene.changePopularity(-Math.ceil(normalDist(gameScene.popularityScore / 100)));
+                            gameScene.changePopularity(-Math.ceil(normalDist(20)));
                             break;
                         default:
                             break;
@@ -486,13 +565,13 @@ function makeInteractive(item, num){
                 case 4:
                     switch (Math.abs(num)) {
                         case 4:
-                            gameScene.changePopularity(Math.round(normalDist(gameScene.popularityScore / 100)));
+                            gameScene.changePopularity(Math.round(normalDist(20)));
                             break;
                         case 2:
-                            gameScene.changePopularity(Math.round(normalDist(gameScene.popularityScore / 500)));
+                            gameScene.changePopularity(Math.round(normalDist(5)));
                             break;
                         case 3:
-                            gameScene.changePopularity(Math.round(normalDist(gameScene.popularityScore / 200)));
+                            gameScene.changePopularity(Math.round(normalDist(10)));
                             break;
                         default:
                             break;
@@ -501,16 +580,16 @@ function makeInteractive(item, num){
                 default:
                     switch (Math.abs(num)) {
                         case 1:
-                            gameScene.changePopularity(-Math.ceil(normalDist(gameScene.popularityScore / 100)));
+                            gameScene.changePopularity(-Math.ceil(normalDist(20)));
                             break;
                         case 3:
-                            gameScene.changePopularity(Math.round(normalDist(gameScene.popularityScore / 500)));
+                            gameScene.changePopularity(Math.round(normalDist(10)));
                             break;
                         case 4:
-                            gameScene.changePopularity(Math.round(normalDist(gameScene.popularityScore / 250)));
+                            gameScene.changePopularity(Math.round(normalDist(20)));
                             break;
                         case 5:
-                            gameScene.changePopularity(Math.round(normalDist(gameScene.popularityScore / 100)));
+                            gameScene.changePopularity(Math.round(normalDist(25)));
                             break;
                         default:
                             break;
@@ -644,7 +723,17 @@ function normalDist(num)
 
 function randoTweet(){
     let topic = Math.floor(Math.random()*3), intensity = Math.floor(Math.random()*11)-5;
-    this.tweetWall.addTweet(generateName(),generateTweet(intensity,topic),intensity,gameScene);
+    this.tweetWall.addRandomTweet(generateName(),generateTweet(intensity,topic),intensity,gameScene);
+}
+
+function tweetdelay(count){
+  let ret = 10000 - (count * 25);
+  return ret;
+}
+
+function addTime(){
+  this.gameTime += 1;
+  this.eventWindow.clock.setText("Elapsed time: " + this.gameTime);
 }
 
 gameScene.getVerified = function(item){
