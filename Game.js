@@ -56,6 +56,8 @@ gameScene.create = function()
     //gives followers based on amount of bots owned
     botTimer = this.time.addEvent({delay: 5000,callback: botFollow, callbackScope: this, loop: true});
 
+    tweetTimer = this.time.addEvent({delay: 8000, callback: randoTweet, callbackScope: this, loop: true});
+
 
     //Buttons
 };
@@ -114,8 +116,10 @@ gameScene.fillControlPanel = function()
     this.followButton = new Button(this,180,config.height-60,'follow',()=>{gameScene.addFollowers(1),gameScene;});
     this.followButton.setScale(.8);
     // this.followButton = new Button(this,125,config.height-137,'follow',()=>{gameScene.addFollowers(1);gameScene.eventWindow.addEvent(this.followCount,10000,true)});
-    this.tweetButton = new Button(this, 125, config.height-165, 'tweet', ()=>{gameScene.tweetWall.addTweet("You",generateTweet(this.tweetAggression, this.topicNumber), this.tweetAggression, gameScene);});
-    this.tweetButton.setScale(.2);
+    let tweeter = this.tweetButton;
+    tweeter = new Button(this, 125, config.height-165, 'tweet', ()=>{gameScene.tweetWall.addTweet("You",generateTweet(this.tweetAggression, this.topicNumber), this.tweetAggression, gameScene);});
+    tweeter.setScale(.2);
+    makeInteractive(tweeter,5);
     this.topicToggle = new Button(this, 125, config.height-225, 'arrow', ()=>{gameScene.changeTopic();});
     this.upButton = new Button(this, 160, config.height - 370, 'up arrow', ()=>{gameScene.increment();});
     this.downButton = new Button(this, 160, config.height - 300, 'down arrow', ()=>{gameScene.decrement()});
@@ -123,6 +127,23 @@ gameScene.fillControlPanel = function()
     this.downButton.setScale(.15);
     this.topicToggle.setScale(.25);
     this.controlPanel.add(this.followButton);
+
+    //TWEENERS
+    // this.tweetButton.on('pointerdown', function(pointer){
+    //     resetItemState(this.tweetButton);
+    //     this.tweetButton.onClickTween = gameScene.tweens.add({
+    //         targets: this.tweetButton,
+    //         scaleX: 1.2,
+    //         scaleY: 1.2,
+    //         duration: 100,
+    //         yoyo: true,
+    //         ease: 'Quad.easeIn',
+    //         onStart: function(){
+    //             item.setScale(1, 1);
+    //         }
+    //     });
+    // });
+
 };
 gameScene.fillTweetWall = function()
 {
@@ -574,4 +595,8 @@ function normalDist(num)
         k+= (Math.round(Math.random())*2*num/25)-(num/25);
     }
     return k;
+  }
+
+function randoTweet(){
+    this.tweetWall.addTweet(generateName(),generateRandomTweet(),this.tweetAggression,gameScene);
 }
