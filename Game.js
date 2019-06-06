@@ -30,6 +30,7 @@ gameScene.preload = function()
     this.load.image('up arrow', "assets/up arrow.png");
     this.load.image('arrow', "assets/arrow.png");
     this.load.image('down arrow', "assets/down arrow.png");
+    this.load.image('tweet', "assets/tweet.jpg");
     //['like','retweet','reply','mute','report']
 };
 
@@ -99,8 +100,11 @@ gameScene.fillControlPanel = function()
     this.controlPanel.add(this.controlPanel.popularityLabel);
     this.controlPanel.add(this.controlPanel.followerLabel);
     //Buttons
-    this.followButton = new Button(this,125,config.height-155,'follow',()=>{gameScene.addFollowers(1);gameScene.tweetWall.addTweet("You",generateTweet(this.tweetAggression, this.topicNumber),gameScene);});
+    this.followButton = new Button(this,180,config.height-60,'follow',()=>{gameScene.addFollowers(1),gameScene;});
+    this.followButton.setScale(.8);
     // this.followButton = new Button(this,125,config.height-137,'follow',()=>{gameScene.addFollowers(1);gameScene.eventWindow.addEvent(this.followCount,10000,true)});
+    this.tweetButton = new Button(this, 125, config.height-165, 'tweet', ()=>{gameScene.tweetWall.addTweet("You",generateTweet(this.tweetAggression, this.topicNumber),gameScene);});
+    this.tweetButton.setScale(.2);
     this.topicToggle = new Button(this, 125, config.height-225, 'arrow', ()=>{gameScene.changeTopic();});
     this.upButton = new Button(this, 160, config.height - 370, 'up arrow', ()=>{gameScene.increment();});
     this.downButton = new Button(this, 160, config.height - 300, 'down arrow', ()=>{gameScene.decrement()});
