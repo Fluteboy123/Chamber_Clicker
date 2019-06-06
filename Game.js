@@ -90,7 +90,7 @@ gameScene.fillControlPanel = function()
 
 
     //Text boxes that hold the game scores in them
-    this.controlPanel.topicLabel = this.add.text(60,config.height-250,"Donald Trump",{fill:"#000"});
+    this.controlPanel.topicLabel = this.add.text(60,config.height-250,"abortion",{fill:"#000"});
     this.controlPanel.tweetAggressionLabel = this.add.text(35, config.height-375, this.tweetAggression, {fill: "#000"});
     this.controlPanel.tweetAggressionLabel.setScale(6);
     this.controlPanel.tweetInstructions = this.add.text(30, config.height-450, "-5 = most liberal\n 0 = moderate\n 5 = most conservative", {fill: "#000"});
@@ -238,9 +238,11 @@ function resetItemState(item){
 }
 
 gameScene.changeTopic = function(){
-  this.topicNumber += 1;
-  if (this.topicNumber === 3){
-    this.topicNumber === 0;
+  if (this.topicNumber < 2){
+    this.topicNumber += 1;
+  }
+  else {
+    this.topicNumber = 0;
   }
   if (this.topicNumber === 0){
     this.controlPanel.topicLabel.setText("abortion");

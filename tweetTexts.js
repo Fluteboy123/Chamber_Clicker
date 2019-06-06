@@ -1,6 +1,6 @@
 function generateTweet(num, topic){
   var tweets = [];
-  if (topic === 1){
+  if (topic === 0){
     tweets = ["Right to lifers are hypocritical moral cowards and we’ll all be better off when they’re dead",
 "Republicans will defend you until you’re born, but after that don’t expect any handouts",
 "Men shouldn’t even be allowed to talk about abortions, it’s not their problem",
@@ -11,9 +11,9 @@ function generateTweet(num, topic){
 "I can’t believe that liberals are so okay with ending an innocent potential life",
 "This fight for abortion shows how far the American moral compass has degenerated",
 "Feminazis and libtards need to get it through their thick skulls that they have no right to play God",
-"Abortion is the biggest genocide in the history of the Earth, MUCH WORSE THAN THE HOLOCAUST" ]
+"Abortion is the biggest genocide in the history\n of the Earth, MUCH WORSE THAN THE HOLOCAUST" ]
   }
-  else if (topic === 0){
+  else if (topic === 1){
     tweets = ["You better watch your fucking ass Trump, I bought a gun and I’m coming for your head.",
 "Every day a predatorial, sociopathic, dumbass pig is our president, I get closer to moving to Canada.",
 "I think that it’s ridiculous that the Mueller report is still unavailable to the public!",
