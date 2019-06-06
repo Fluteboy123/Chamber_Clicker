@@ -105,7 +105,7 @@ gameScene.fillControlPanel = function()
     this.controlPanel.topicLabel = this.add.text(60,config.height-250,"abortion",{fill:"#000"});
     this.controlPanel.tweetAggressionLabel = this.add.text(35, config.height-375, this.tweetAggression, {fill: "#000"});
     this.controlPanel.tweetAggressionLabel.setScale(6);
-    this.controlPanel.tweetInstructions = this.add.text(30, config.height-450, "-5 = most liberal\n 0 = moderate\n 5 = most conservative", {fill: "#000"});
+    this.controlPanel.tweetInstructions = this.add.text(30, config.height-450, "5 = most conservative \n0 = moderate \n-5 = most liberal", {fill: "#000"});
     this.controlPanel.popularityLabel = this.add.text(10,config.height-75,this.popularityScore,{fill:"#000"});
     this.controlPanel.followerLabel = this.add.text(10,config.height-25,this.followCount,{fill:"#000"});
     this.controlPanel.add(this.controlPanel.popularityLabel);
