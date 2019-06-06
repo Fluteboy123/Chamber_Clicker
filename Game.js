@@ -99,7 +99,7 @@ gameScene.fillControlPanel = function()
     this.controlPanel.add(this.controlPanel.popularityLabel);
     this.controlPanel.add(this.controlPanel.followerLabel);
     //Buttons
-    this.followButton = new Button(this,125,config.height-155,'follow',()=>{gameScene.addFollowers(1);gameScene.tweetWall.addTweet("You",generateTweet(this.tweetAggression),gameScene);});
+    this.followButton = new Button(this,125,config.height-155,'follow',()=>{gameScene.addFollowers(1);gameScene.tweetWall.addTweet("You",generateTweet(this.tweetAggression, this.topicNumber),gameScene);});
     // this.followButton = new Button(this,125,config.height-137,'follow',()=>{gameScene.addFollowers(1);gameScene.eventWindow.addEvent(this.followCount,10000,true)});
     this.topicToggle = new Button(this, 125, config.height-225, 'arrow', ()=>{gameScene.changeTopic();});
     this.upButton = new Button(this, 160, config.height - 370, 'up arrow', ()=>{gameScene.increment();});
@@ -239,11 +239,17 @@ function resetItemState(item){
 
 gameScene.changeTopic = function(){
   this.topicNumber += 1;
-  if (this.topicNumber%2 === 1){
+  if (this.topicNumber === 3){
+    this.topicNumber === 0;
+  }
+  if (this.topicNumber === 0){
     this.controlPanel.topicLabel.setText("abortion");
   }
-  else{
-    this.controlPanel.topicLabel.setText("Donald Trump")
+  else if (this.topicNumber === 1){
+    this.controlPanel.topicLabel.setText("Donald Trump");
+  }
+  else if (this.topicNumber === 2){
+    this.controlPanel.topicLabel.setText("climate change");
   }
 };
 
