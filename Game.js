@@ -54,7 +54,7 @@ gameScene.create = function()
     this.fillEvents();
 
     //gives followers based on amount of bots owned
-    botTimer = this.time.addEvent({delay: 10000,callback: botFollow, callbackScope: this, loop: true});
+    botTimer = this.time.addEvent({delay: 5000,callback: botFollow, callbackScope: this, loop: true});
 
 
     //Buttons
@@ -198,6 +198,7 @@ gameScene.fillTweetWall = function()
 gameScene.fillUpgrades = function()
 {
     this.upgrades.add(this.add.text(10,10,"Upgrades",{fill:"#000"}));
+    this.upgrades.add(this.add.text(10,120,"Cost: 20 Popularity",{fill:"#000"}));
     this.upgrades.botLabel = this.add.text(125,70,this.botCount,{fill:"#000"});
     this.upgrades.add(this.upgrades.botLabel);
 
