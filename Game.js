@@ -196,7 +196,7 @@ gameScene.fillTweetWall = function()
 
         this.currentTweets.push(newTweet);
         //Change following with respect to current following and polarity
-        switch(Math.floor(Math.log10(gameScene.followCount+0.1000001)))
+        switch(Math.floor(Math.log(gameScene.followCount+0.1000001)))
         {
             case -1:
                 if(Math.abs(intensity)<2)
@@ -480,7 +480,7 @@ function makeInteractive(item, num){
         if(num===0)
             gameScene.changePopularity(1);
         else {
-            switch (Math.floor(Math.log10(gameScene.followCount + 0.1000001))) {
+            switch (Math.floor(Math.log(gameScene.followCount + 0.1000001))) {
                 case -1:
                     if (Math.abs(num) < 2)
                         gameScene.changePopularity(1);
