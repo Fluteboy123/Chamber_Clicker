@@ -487,6 +487,7 @@ function normalDist(num)
         k+= (Math.round(Math.random())*2*num/25)-(num/25);
     }
     return k;
+  }
 
 function randoTweet(){
     this.tweetWall.addTweet(generateName(),generateRandomTweet(),this.tweetAggression,gameScene);
