@@ -53,6 +53,9 @@ gameScene.create = function()
     this.fillUpgrades();
     this.fillEvents();
 
+    //gives followers based on amount of bots owned
+    botTimer = this.time.addEvent({delay: 10000,callback: botFollow, callbackScope: this, loop: true});
+
 
     //Buttons
 };
