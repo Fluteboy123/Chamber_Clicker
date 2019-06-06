@@ -32,7 +32,7 @@ gameScene.preload = function()
     this.load.image('up arrow', "assets/up arrow.png");
     this.load.image('arrow', "assets/arrow.png");
     this.load.image('down arrow', "assets/down arrow.png");
-    this.load.image('tweet', "assets/tweet.jpg");
+    this.load.image('tweet', "assets/tweet.png");
     //['like','retweet','reply','mute','report']
 };
 
@@ -112,17 +112,17 @@ gameScene.fillControlPanel = function()
     this.controlPanel.add(this.controlPanel.followerLabel);
     //Buttons
     this.followButton = new Button(this,180,config.height-60,'follow',()=>{gameScene.addFollowers(1),gameScene;});
-    this.followButton.setScale(.8);
     // this.followButton = new Button(this,125,config.height-137,'follow',()=>{gameScene.addFollowers(1);gameScene.eventWindow.addEvent(this.followCount,10000,true)});
-    this.tweetButton = new Button(this, 125, config.height-165, 'tweet', ()=>{gameScene.tweetWall.addTweet("You",generateTweet(this.tweetAggression, this.topicNumber), this.tweetAggression, gameScene);});
-    this.tweetButton.setScale(.2);
-    this.topicToggle = new Button(this, 125, config.height-225, 'arrow', ()=>{gameScene.changeTopic();});
-    this.upButton = new Button(this, 160, config.height - 370, 'up arrow', ()=>{gameScene.increment();});
-    this.downButton = new Button(this, 160, config.height - 300, 'down arrow', ()=>{gameScene.decrement()});
-    this.upButton.setScale(.1);
-    this.downButton.setScale(.15);
-    this.topicToggle.setScale(.25);
+    this.tweetButton = new Button(this, 125, config.height-145, 'tweet', ()=>{gameScene.tweetWall.addTweet("You",generateTweet(this.tweetAggression, this.topicNumber), this.tweetAggression, gameScene);});
+    this.topicToggle = new Button(this, 125, config.height-200, 'arrow', ()=>{gameScene.changeTopic();});
+    this.upButton = new Button(this, 175, config.height - 370, 'up arrow', ()=>{gameScene.increment();});
+    this.downButton = new Button(this, 175, config.height - 300, 'down arrow', ()=>{gameScene.decrement()});
     this.controlPanel.add(this.followButton);
+    buttonTween(this.tweetButton);
+    buttonTween(this.topicToggle);
+    buttonTween(this.upButton);
+    buttonTween(this.downButton);
+    buttonTween(this.followButton);
 };
 gameScene.fillTweetWall = function()
 {
@@ -296,10 +296,46 @@ function makeInteractive(item, num){
 
 }
 
+function buttonTween(item){
+  item.setInteractive();
+  item.on('pointerdown', function(pointer){
+      resetItemState(item);
+      item.onClickTween = gameScene.tweens.add({
+          targets: item,
+          scaleX: 1.1,
+          scaleY: 1.1,
+          duration: 100,
+          yoyo: true,
+          ease: 'Quad.easeIn',
+          onStart: function(){
+              item.setScale(1, 1);
+          }
+      });
+  });
+  item.on('pointerover',function(pointer){
+    resetItemState(item);
+    item.onHoverTween = gameScene.tweens.add({
+        targets:item,
+        duration: 100,
+        alpha: {
+        getStart: () => 0.5,
+        getEnd: () => 1},
+        ease: 'Quad.easeIn',
+        OnStart: function(){
+          item.setAlpha(1);
+        }
+      })
+    })
+}
+
 function resetItemState(item){
 
     if(item.onClickTween){
         item.onClickTween.remove();
+    }
+
+    if(item.onHoverTween){
+      item.onHoverTween.remove;
     }
 
 }
