@@ -482,10 +482,10 @@ function makeInteractive(item, num){
                 case 0:
                     switch (Math.abs(num)) {
                         case 3:
-                            gameScene.changePopularity(-1);
+                            gameScene.changePopularity(-5);
                             break;
                         case 4:
-                            gameScene.changePopularity(-1);
+                            gameScene.changePopularity(-5);
                             break;
                         case 5:
                             gameScene.changePopularity(-1 * gameScene.popularityScore);
@@ -500,10 +500,10 @@ function makeInteractive(item, num){
                             gameScene.changePopularity(1);
                             break;
                         case 4:
-                            gameScene.changePopularity(-1);
+                            gameScene.changePopularity(-10);
                             break;
                         case 5:
-                            gameScene.changePopularity(-1);
+                            gameScene.changePopularity(-10);
                             break;
                         default:
                             break;
@@ -518,7 +518,7 @@ function makeInteractive(item, num){
                             gameScene.changePopularity(Math.round(normalDist(5)));
                             break;
                         case 5:
-                            gameScene.changePopularity(-Math.ceil(normalDist(5)));
+                            gameScene.changePopularity(-Math.ceil(normalDist(20)));
                             break;
                         default:
                             break;
@@ -536,7 +536,7 @@ function makeInteractive(item, num){
                             gameScene.changePopularity(Math.round(normalDist(10)));
                             break;
                         case 5:
-                            gameScene.changePopularity(-Math.ceil(normalDist(10)));
+                            gameScene.changePopularity(-Math.ceil(normalDist(20)));
                             break;
                         default:
                             break;
@@ -560,7 +560,7 @@ function makeInteractive(item, num){
                 default:
                     switch (Math.abs(num)) {
                         case 1:
-                            gameScene.changePopularity(-Math.ceil(normalDist(25)));
+                            gameScene.changePopularity(-Math.ceil(normalDist(20)));
                             break;
                         case 3:
                             gameScene.changePopularity(Math.round(normalDist(10)));
