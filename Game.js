@@ -17,6 +17,7 @@ gameScene.init = function()
     this.botCount = 0;
     this.topicNumber = 0;
     this.tweetAggression = 0;
+    this.gameTime = 0;
 };
 
 gameScene.preload = function()
@@ -59,7 +60,8 @@ gameScene.create = function()
     //timer for random spawning of other tweets
     tweetTimer = this.time.addEvent({delay: tweetdelay(this.followCount), callback: randoTweet, callbackScope: this, loop: true});
 
-
+    // game clock
+    gameClock = this.time.addEvent({delay: 1000, callback: addTime, callbackScope: this, loop: true});
     //Buttons
 };
 
@@ -83,6 +85,7 @@ gameScene.update = function(time,delta)
                 this.eventWindow.displayNextEvent();
         }
     }
+
 };
 
 gameScene.fillBackground = function()
@@ -438,6 +441,9 @@ gameScene.fillEvents = function()
         gameScene.backGraphics.fillStyle(gameScene.windowColors[2]);
         gameScene.backGraphics.fillRect(gameScene.windowPos[3][0]+25,gameScene.windowPos[3][1]+150,200,25);
     };
+
+    this.eventWindow.goalLabel = this.add.text(750, config.height-200, "Prototype: Get verified as \nquickly as possible", {fill: "#000"});
+    this.eventWindow.clock = this.add.text(750, config.height-150, "Elapsed time: " + this.gameTime, {fill: "#000"});
 };
 
 gameScene.addFollowers = function(num)
@@ -691,4 +697,9 @@ function randoTweet(){
 function tweetdelay(count){
   let ret = 10000 - (count * 25);
   return ret;
+}
+
+function addTime(){
+  this.gameTime += 1;
+  this.eventWindow.clock.setText("Elapsed time: " + this.gameTime);
 }
