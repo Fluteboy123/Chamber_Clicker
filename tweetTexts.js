@@ -27,17 +27,17 @@ function generateTweet(num, topic){
 "Thank GOD WE HAVE a BUSINESS MAN SAVING OUR \nCOUNTRY. OBAMA’S A MONKEY, HILLARYS THE DEVIL, \nFUCK BERNIE #MAGA#MAGA"]
   }
   else if (topic === 2){
-    tweets = ["If you haven’t already gone vegan, you might as well kill yourself and fertilize the plants for the rest of us",
-"Our industrialist society is destroying our planet #Socialism #KillBigBusiness",
-"These senile climate deniers need to get out of the way before they doom the rest of us",
-"Phasing out plastic straws was a good start, but it’s not enough!",
-"We’re really falling behind other countries in sustainability",
-"Recently, I’ve been biking to work to reduce my carbon footprint",
-"Climate change is a real issue, but it’s not nearly as important as national defense",
+    tweets = ["If you haven’t already gone vegan, you might as \nwell kill yourself and fertilize the plants for \nthe rest of us",
+"Our industrialist society is destroying our \nplanet #Socialism #KillBigBusiness",
+"These senile climate deniers need to get out of \nthe way before they doom the rest of us",
+"Phasing out plastic straws was a good start, \nbut it’s not enough!",
+"We’re really falling behind other countries in \nsustainability",
+"Recently, I’ve been biking to work to reduce my \ncarbon footprint",
+"Climate change is a real issue, but it’s not \nnearly as important as national defense",
 "AOC’s New Green Deal is a pile of bullshit",
-"Thank God we’re not in the Paris Accord, that shitty deal was going to rob our country",
+"Thank God we’re not in the Paris Accord, that \nshitty deal was going to rob our country",
 "They claim that a climate change of .5 degrees \nwould be bad. That happens every time the sun\nrises or sets. IDIOTS",
-"Climate change is FAKE NEWS, Donald Trump won’t fall for your liberal bullshit" ]
+"Climate change is FAKE NEWS, Donald Trump won’t \nfall for your liberal bullshit" ]
   }
 return tweets[num+5];
 }
