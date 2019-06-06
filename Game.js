@@ -14,6 +14,7 @@ gameScene.init = function()
 {
     this.followCount = 0;
     this.popularityScore = 0;
+    this.botCount = 0;
     this.topicNumber = 0;
     this.tweetAggression = 0;
 };
@@ -26,7 +27,8 @@ gameScene.preload = function()
     this.load.image('like',"assets/Like.png");
     this.load.image('retweet',"assets/Retweet.png");
     this.load.image('reply',"assets/Reply.jpg");
-
+    this.load.image('bot',"assets/Bot.png");
+    this.load.image('bot2',"assets/Bot2.png");
     this.load.image('up arrow', "assets/up arrow.png");
     this.load.image('arrow', "assets/arrow.png");
     this.load.image('down arrow', "assets/down arrow.png");
@@ -49,6 +51,7 @@ gameScene.create = function()
     this.fillTweetWall();
     this.fillUpgrades();
     this.fillEvents();
+
 
     //Buttons
 };
@@ -182,6 +185,17 @@ gameScene.fillTweetWall = function()
 gameScene.fillUpgrades = function()
 {
     this.upgrades.add(this.add.text(10,10,"Upgrades",{fill:"#000"}));
+    this.upgrades.botLabel = this.add.text(125,70,this.botCount,{fill:"#000"});
+    this.upgrades.add(this.upgrades.botLabel);
+
+    //Bot Logo Logic
+    let botLogo = this.add.sprite(50,75,'bot');
+    this.upgrades.add(botLogo);
+    botLogo.setInteractive();
+    botLogo.on('pointerover',() => botLogo.setTexture('bot2'));
+    botLogo.on('pointerout',() => botLogo.setTexture('bot'));
+    botLogo.on('pointerdown', () => this.addBots(1));
+
 };
 gameScene.fillEvents = function()
 {
@@ -201,6 +215,17 @@ gameScene.addFollowers = function(num)
     this.controlPanel.followerLabel.setText(this.followCount);
 };
 
+gameScene.addBots = function(num)
+{
+  if(this.popularityScore > 19){
+    this.popularityScore -= 20;
+    this.controlPanel.popularityLabel.setText(this.popularityScore);
+    this.botCount += num;
+    this.upgrades.botLabel.setText(this.botCount);
+  }
+
+};
+
 gameScene.changePopularity = function(num)
 {
     this.popularityScore += num;
@@ -217,7 +242,7 @@ function makeInteractive(item){
             targets: item,
             scaleX: 1.2,
             scaleY: 1.2,
-            duration: 200,
+            duration: 100,
             yoyo: true,
             ease: 'Quad.easeIn',
             onStart: function(){
@@ -259,3 +284,8 @@ gameScene.decrement = function(){
     this.controlPanel.tweetAggressionLabel.setText(this.tweetAggression);
   }
 };
+
+function botFollow(){
+  this.followCount = this.followCount + this.botCount;
+  this.controlPanel.followerLabel.setText(this.followCount);
+}
