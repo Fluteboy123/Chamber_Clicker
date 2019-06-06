@@ -198,19 +198,19 @@ gameScene.fillTweetWall = function()
         {
             case -1:
                 if(Math.abs(intensity)<2)
-                    gameScene.followCount ++;
+                    gameScene.addFollowers(1);
                 break;
             case 0:
                 switch(Math.abs(intensity))
                 {
                     case 3:
-                        gameScene.followCount--;
+                        gameScene.addFollowers(-1);
                         break;
                     case 4:
-                        gameScene.followCount -= Math.ceil(gameScene.followCount/2);
+                        gameScene.addFollowers(-Math.ceil(gameScene.followCount/2));
                         break;
                     case 5:
-                        gameScene.followCount = 0;
+                        gameScene.addFollowers(-1*gameScene.followCount);
                         break;
                     default:
                         break;
@@ -220,13 +220,13 @@ gameScene.fillTweetWall = function()
                 switch(Math.abs(intensity))
                 {
                     case 1:
-                        gameScene.followCount+= Math.round(gameScene.followCount/10);
+                        gameScene.addFollowers(Math.round(gameScene.followCount/10));
                         break;
                     case 4:
-                        gameScene.followCount -= Math.ceil(gameScene.followCount/4);
+                        gameScene.addFollowers(-Math.ceil(gameScene.followCount/4));
                         break;
                     case 5:
-                        gameScene.followCount -= Math.ceil(gameScene.followCount/2);
+                        gameScene.addFollowers(-Math.ceil(gameScene.followCount/2));
                         break;
                     default:
                         break;
@@ -236,13 +236,13 @@ gameScene.fillTweetWall = function()
                 switch(Math.abs(intensity))
                 {
                     case 1:
-                        gameScene.followCount+= Math.round(normalDist(gameScene.followCount/10));
+                        gameScene.addFollowers(Math.round(normalDist(gameScene.followCount/10)));
                         break;
                     case 2:
-                        gameScene.followCount += Math.round(normalDist(gameScene.followCount/20));
+                        gameScene.addFollowers(Math.round(normalDist(gameScene.followCount/20)));
                         break;
                     case 5:
-                        gameScene.followCount -= Math.ceil(normalDist(gameScene.followCount/10));
+                        gameScene.addFollowers(-Math.ceil(normalDist(gameScene.followCount/10)));
                         break;
                     default:
                         break;
@@ -252,16 +252,16 @@ gameScene.fillTweetWall = function()
                 switch(Math.abs(intensity))
                 {
                     case 1:
-                        gameScene.followCount+= Math.round(normalDist(gameScene.followCount/50));
+                        gameScene.addFollowers(Math.round(normalDist(gameScene.followCount/50)));
                         break;
                     case 2:
-                        gameScene.followCount += Math.round(normalDist(gameScene.followCount/10));
+                        gameScene.addFollowers(Math.round(normalDist(gameScene.followCount/10)));
                         break;
                     case 3:
-                        gameScene.followCount += Math.round(normalDist(gameScene.followCount/20));
+                        gameScene.addFollowers(Math.round(normalDist(gameScene.followCount/20)));
                         break;
                     case 5:
-                        gameScene.followCount -= Math.ceil(normalDist(gameScene.followCount/100));
+                        gameScene.addFollowers(-Math.ceil(normalDist(gameScene.followCount/100)));
                         break;
                     default:
                         break;
@@ -271,16 +271,16 @@ gameScene.fillTweetWall = function()
                 switch(Math.abs(intensity))
                 {
                     case 4:
-                        gameScene.followCount+= Math.round(normalDist(gameScene.followCount/100));
+                        gameScene.addFollowers(Math.round(normalDist(gameScene.followCount/100)));
                         break;
                     case 2:
-                        gameScene.followCount += Math.round(normalDist(gameScene.followCount/500));
+                        gameScene.addFollowers(Math.round(normalDist(gameScene.followCount/500)));
                         break;
                     case 3:
-                        gameScene.followCount += Math.round(normalDist(gameScene.followCount/200));
+                        gameScene.addFollowers(Math.round(normalDist(gameScene.followCount/200)));
                         break;
                     case 0:
-                        gameScene.followCount -= Math.ceil(normalDist(gameScene.followCount/200));
+                        gameScene.addFollowers(-Math.ceil(normalDist(gameScene.followCount/200)));
                         break;
                     default:
                         break;
@@ -290,19 +290,19 @@ gameScene.fillTweetWall = function()
                 switch(Math.abs(intensity))
                 {
                     case 0:
-                        gameScene.followCount -= Math.ceil(normalDist(gameScene.followCount/5));
+                        gameScene.addFollowers(-Math.ceil(normalDist(gameScene.followCount/5)));
                         break;
                     case 1:
-                        gameScene.followCount -= Math.ceil(normalDist(gameScene.followCount/100));
+                        gameScene.addFollowers(-Math.ceil(normalDist(gameScene.followCount/100)));
                         break;
                     case 3:
-                        gameScene.followCount += Math.round(normalDist(gameScene.followCount/500));
+                        gameScene.addFollowers(Math.round(normalDist(gameScene.followCount/500)));
                         break;
                     case 4:
-                        gameScene.followCount += Math.round(normalDist(gameScene.followCount/250));
+                        gameScene.addFollowers(Math.round(normalDist(gameScene.followCount/250)));
                         break;
                     case 5:
-                        gameScene.followCount += Math.round(normalDist(gameScene.followCount/100));
+                        gameScene.addFollowers(Math.round(normalDist(gameScene.followCount/100)));
                         break;
                     default:
                         break;
@@ -395,7 +395,115 @@ gameScene.changePopularity = function(num)
 
 function makeInteractive(item, num){
     item.setInteractive();
-    item.on('pointerdown',()=>{gameScene.changePopularity(Math.abs(num)+1);});
+    item.on('pointerdown',()=>{
+        if(num===0)
+            gameScene.changePopularity(1);
+        else {
+            switch (Math.floor(Math.log10(gameScene.followCount + 0.1000001))) {
+                case -1:
+                    if (Math.abs(num) < 2)
+                        gameScene.changePopularity(1);
+                    break;
+                case 0:
+                    switch (Math.abs(num)) {
+                        case 3:
+                            gameScene.changePopularity(-1);
+                            break;
+                        case 4:
+                            gameScene.changePopularity(-Math.ceil(gameScene.followCount / 2));
+                            break;
+                        case 5:
+                            gameScene.changePopularity(-1 * gameScene.followCount);
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                case 1:
+                    switch (Math.abs(num)) {
+                        case 1:
+                            gameScene.changePopularity(Math.round(gameScene.followCount / 10));
+                            break;
+                        case 4:
+                            gameScene.changePopularity(-Math.ceil(gameScene.followCount / 4));
+                            break;
+                        case 5:
+                            gameScene.changePopularity(-Math.ceil(gameScene.followCount / 2));
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                case 2:
+                    switch (Math.abs(num)) {
+                        case 1:
+                            gameScene.changePopularity(Math.round(normalDist(gameScene.followCount / 10)));
+                            break;
+                        case 2:
+                            gameScene.changePopularity(Math.round(normalDist(gameScene.followCount / 20)));
+                            break;
+                        case 5:
+                            gameScene.changePopularity(-Math.ceil(normalDist(gameScene.followCount / 10)));
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                case 3:
+                    switch (Math.abs(num)) {
+                        case 1:
+                            gameScene.changePopularity(Math.round(normalDist(gameScene.followCount / 50)));
+                            break;
+                        case 2:
+                            gameScene.changePopularity(Math.round(normalDist(gameScene.followCount / 10)));
+                            break;
+                        case 3:
+                            gameScene.changePopularity(Math.round(normalDist(gameScene.followCount / 20)));
+                            break;
+                        case 5:
+                            gameScene.changePopularity(-Math.ceil(normalDist(gameScene.followCount / 100)));
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                case 4:
+                    switch (Math.abs(num)) {
+                        case 4:
+                            gameScene.changePopularity(Math.round(normalDist(gameScene.followCount / 100)));
+                            break;
+                        case 2:
+                            gameScene.changePopularity(Math.round(normalDist(gameScene.followCount / 500)));
+                            break;
+                        case 3:
+                            gameScene.changePopularity(Math.round(normalDist(gameScene.followCount / 200)));
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                default:
+                    switch (Math.abs(num)) {
+                        case 1:
+                            gameScene.changePopularity(-Math.ceil(normalDist(gameScene.followCount / 100)));
+                            break;
+                        case 3:
+                            gameScene.changePopularity(Math.round(normalDist(gameScene.followCount / 500)));
+                            break;
+                        case 4:
+                            gameScene.changePopularity(Math.round(normalDist(gameScene.followCount / 250)));
+                            break;
+                        case 5:
+                            gameScene.changePopularity(Math.round(normalDist(gameScene.followCount / 100)));
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+            }
+        }
+        gameScene.controlPanel.popularityLabel.setText(gameScene.popularityScore);
+    });
     item.on('pointerdown', function(pointer){
         resetItemState(item);
         item.onClickTween = gameScene.tweens.add({
