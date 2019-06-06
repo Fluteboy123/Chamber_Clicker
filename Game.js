@@ -58,7 +58,7 @@ gameScene.create = function()
     this.fillEvents();
 
     //gives followers based on amount of bots owned
-    botTimer = this.time.addEvent({delay: 5000,callback: botFollow, callbackScope: this, loop: true});
+    botTimer = this.time.addEvent({delay: 2000,callback: botFollow, callbackScope: this, loop: true});
 
     //timer for random spawning of other tweets
     tweetTimer = this.time.addEvent({delay: tweetdelay(this.followCount), callback: randoTweet, callbackScope: this, loop: true});
@@ -402,9 +402,8 @@ gameScene.fillUpgrades = function()
     let botLogo = this.add.sprite(50,75,'bot');
     this.upgrades.add(botLogo);
     botLogo.setInteractive();
-    botLogo.on('pointerover',() => botLogo.setTexture('bot2'));
-    botLogo.on('pointerout',() => botLogo.setTexture('bot'));
-    botLogo.on('pointerdown', () => this.addBots(1));
+    botLogo.on('pointerdown', () => this.addBots(1,botLogo));
+    buttonTween(botLogo);
 
     //Verify botLogo
     let vLogo = this.add.sprite(125,210,'verify');
@@ -468,9 +467,10 @@ gameScene.addFollowers = function(num)
     this.controlPanel.followerLabel.setText(this.followCount);
 };
 
-gameScene.addBots = function(num)
+gameScene.addBots = function(num,item)
 {
   if(this.popularityScore > 19){
+    item.setTexture('bot2');
     this.popularityScore -= 20;
     this.controlPanel.popularityLabel.setText(this.popularityScore);
     this.botCount += num;
@@ -738,8 +738,8 @@ function addTime(){
 
 gameScene.getVerified = function(item){
 
-  if(this.popularityScore > 99){
-    this.popularityScore -= 100;
+  if(this.popularityScore > 999){
+    this.popularityScore -= 1000;
     this.controlPanel.popularityLabel.setText(this.popularityScore);
     item.setTexture('verify2');
   }
