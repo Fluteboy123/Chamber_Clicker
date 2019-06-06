@@ -56,6 +56,8 @@ gameScene.create = function()
     //gives followers based on amount of bots owned
     botTimer = this.time.addEvent({delay: 5000,callback: botFollow, callbackScope: this, loop: true});
 
+    tweetTimer = this.time.addEvent({delay: 8000, callback: randoTweet, callbackScope: this, loop: true});
+
 
     //Buttons
 };
@@ -105,7 +107,7 @@ gameScene.fillControlPanel = function()
     this.controlPanel.topicLabel = this.add.text(60,config.height-250,"abortion",{fill:"#000"});
     this.controlPanel.tweetAggressionLabel = this.add.text(35, config.height-375, this.tweetAggression, {fill: "#000"});
     this.controlPanel.tweetAggressionLabel.setScale(6);
-    this.controlPanel.tweetInstructions = this.add.text(30, config.height-450, "-5 = most liberal\n 0 = moderate\n 5 = most conservative", {fill: "#000"});
+    this.controlPanel.tweetInstructions = this.add.text(30, config.height-450, "5 = most conservative \n0 = moderate \n-5 = most liberal", {fill: "#000"});
     this.controlPanel.popularityLabel = this.add.text(10,config.height-75,this.popularityScore,{fill:"#000"});
     this.controlPanel.followerLabel = this.add.text(10,config.height-25,this.followCount,{fill:"#000"});
     this.controlPanel.add(this.controlPanel.popularityLabel);
@@ -193,6 +195,123 @@ gameScene.fillTweetWall = function()
             scaleY:1
         });
         this.currentTweets.push(newTweet);
+        //Change following with respect to current following and polarity
+        switch(Math.floor(Math.log10(gameScene.followCount+0.1000001)))
+        {
+            case -1:
+                if(Math.abs(intensity)<2)
+                    gameScene.addFollowers(1);
+                break;
+            case 0:
+                switch(Math.abs(intensity))
+                {
+                    case 3:
+                        gameScene.addFollowers(-1);
+                        break;
+                    case 4:
+                        gameScene.addFollowers(-Math.ceil(gameScene.followCount/2));
+                        break;
+                    case 5:
+                        gameScene.addFollowers(-1*gameScene.followCount);
+                        break;
+                    default:
+                        break;
+                }
+                break;
+            case 1:
+                switch(Math.abs(intensity))
+                {
+                    case 1:
+                        gameScene.addFollowers(Math.round(gameScene.followCount/10));
+                        break;
+                    case 4:
+                        gameScene.addFollowers(-Math.ceil(gameScene.followCount/4));
+                        break;
+                    case 5:
+                        gameScene.addFollowers(-Math.ceil(gameScene.followCount/2));
+                        break;
+                    default:
+                        break;
+                }
+                break;
+            case 2:
+                switch(Math.abs(intensity))
+                {
+                    case 1:
+                        gameScene.addFollowers(Math.round(normalDist(gameScene.followCount/10)));
+                        break;
+                    case 2:
+                        gameScene.addFollowers(Math.round(normalDist(gameScene.followCount/20)));
+                        break;
+                    case 5:
+                        gameScene.addFollowers(-Math.ceil(normalDist(gameScene.followCount/10)));
+                        break;
+                    default:
+                        break;
+                }
+                break;
+            case 3:
+                switch(Math.abs(intensity))
+                {
+                    case 1:
+                        gameScene.addFollowers(Math.round(normalDist(gameScene.followCount/50)));
+                        break;
+                    case 2:
+                        gameScene.addFollowers(Math.round(normalDist(gameScene.followCount/10)));
+                        break;
+                    case 3:
+                        gameScene.addFollowers(Math.round(normalDist(gameScene.followCount/20)));
+                        break;
+                    case 5:
+                        gameScene.addFollowers(-Math.ceil(normalDist(gameScene.followCount/100)));
+                        break;
+                    default:
+                        break;
+                }
+                break;
+            case 4:
+                switch(Math.abs(intensity))
+                {
+                    case 4:
+                        gameScene.addFollowers(Math.round(normalDist(gameScene.followCount/100)));
+                        break;
+                    case 2:
+                        gameScene.addFollowers(Math.round(normalDist(gameScene.followCount/500)));
+                        break;
+                    case 3:
+                        gameScene.addFollowers(Math.round(normalDist(gameScene.followCount/200)));
+                        break;
+                    case 0:
+                        gameScene.addFollowers(-Math.ceil(normalDist(gameScene.followCount/200)));
+                        break;
+                    default:
+                        break;
+                }
+                break;
+            default:
+                switch(Math.abs(intensity))
+                {
+                    case 0:
+                        gameScene.addFollowers(-Math.ceil(normalDist(gameScene.followCount/5)));
+                        break;
+                    case 1:
+                        gameScene.addFollowers(-Math.ceil(normalDist(gameScene.followCount/100)));
+                        break;
+                    case 3:
+                        gameScene.addFollowers(Math.round(normalDist(gameScene.followCount/500)));
+                        break;
+                    case 4:
+                        gameScene.addFollowers(Math.round(normalDist(gameScene.followCount/250)));
+                        break;
+                    case 5:
+                        gameScene.addFollowers(Math.round(normalDist(gameScene.followCount/100)));
+                        break;
+                    default:
+                        break;
+                }
+                break;
+        }
+        gameScene.controlPanel.followerLabel.setText(gameScene.followCount);
     };
 };
 gameScene.fillUpgrades = function()
@@ -278,7 +397,115 @@ gameScene.changePopularity = function(num)
 
 function makeInteractive(item, num){
     item.setInteractive();
-    item.on('pointerdown',()=>{gameScene.changePopularity(Math.abs(num)+1);});
+    item.on('pointerdown',()=>{
+        if(num===0)
+            gameScene.changePopularity(1);
+        else {
+            switch (Math.floor(Math.log10(gameScene.followCount + 0.1000001))) {
+                case -1:
+                    if (Math.abs(num) < 2)
+                        gameScene.changePopularity(1);
+                    break;
+                case 0:
+                    switch (Math.abs(num)) {
+                        case 3:
+                            gameScene.changePopularity(-1);
+                            break;
+                        case 4:
+                            gameScene.changePopularity(-Math.ceil(gameScene.popularityScore / 2));
+                            break;
+                        case 5:
+                            gameScene.changePopularity(-1 * gameScene.popularityScore);
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                case 1:
+                    switch (Math.abs(num)) {
+                        case 1:
+                            gameScene.changePopularity(Math.round(gameScene.popularityScore / 10));
+                            break;
+                        case 4:
+                            gameScene.changePopularity(-Math.ceil(gameScene.popularityScore / 4));
+                            break;
+                        case 5:
+                            gameScene.changePopularity(-Math.ceil(gameScene.popularityScore / 2));
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                case 2:
+                    switch (Math.abs(num)) {
+                        case 1:
+                            gameScene.changePopularity(Math.round(normalDist(gameScene.popularityScore / 10)));
+                            break;
+                        case 2:
+                            gameScene.changePopularity(Math.round(normalDist(gameScene.popularityScore / 20)));
+                            break;
+                        case 5:
+                            gameScene.changePopularity(-Math.ceil(normalDist(gameScene.popularityScore / 10)));
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                case 3:
+                    switch (Math.abs(num)) {
+                        case 1:
+                            gameScene.changePopularity(Math.round(normalDist(gameScene.popularityScore / 50)));
+                            break;
+                        case 2:
+                            gameScene.changePopularity(Math.round(normalDist(gameScene.popularityScore / 10)));
+                            break;
+                        case 3:
+                            gameScene.changePopularity(Math.round(normalDist(gameScene.popularityScore / 20)));
+                            break;
+                        case 5:
+                            gameScene.changePopularity(-Math.ceil(normalDist(gameScene.popularityScore / 100)));
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                case 4:
+                    switch (Math.abs(num)) {
+                        case 4:
+                            gameScene.changePopularity(Math.round(normalDist(gameScene.popularityScore / 100)));
+                            break;
+                        case 2:
+                            gameScene.changePopularity(Math.round(normalDist(gameScene.popularityScore / 500)));
+                            break;
+                        case 3:
+                            gameScene.changePopularity(Math.round(normalDist(gameScene.popularityScore / 200)));
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                default:
+                    switch (Math.abs(num)) {
+                        case 1:
+                            gameScene.changePopularity(-Math.ceil(normalDist(gameScene.popularityScore / 100)));
+                            break;
+                        case 3:
+                            gameScene.changePopularity(Math.round(normalDist(gameScene.popularityScore / 500)));
+                            break;
+                        case 4:
+                            gameScene.changePopularity(Math.round(normalDist(gameScene.popularityScore / 250)));
+                            break;
+                        case 5:
+                            gameScene.changePopularity(Math.round(normalDist(gameScene.popularityScore / 100)));
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+            }
+        }
+        gameScene.controlPanel.popularityLabel.setText(gameScene.popularityScore);
+    });
     item.on('pointerdown', function(pointer){
         resetItemState(item);
         item.onClickTween = gameScene.tweens.add({
@@ -375,4 +602,19 @@ gameScene.decrement = function(){
 function botFollow(){
   this.followCount = this.followCount + this.botCount;
   this.controlPanel.followerLabel.setText(this.followCount);
+}
+
+function normalDist(num)
+{
+    let k = num;
+    for(let i=0;i<25;i++)
+    {
+        k+= (Math.round(Math.random())*2*num/25)-(num/25);
+    }
+    return k;
+  }
+
+function randoTweet(){
+    let topic = Math.floor(Math.random()*3), intensity = Math.floor(Math.random()*11)-5;
+    this.tweetWall.addTweet(generateName(),generateTweet(intensity,topic),intensity,gameScene);
 }
