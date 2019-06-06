@@ -14,6 +14,7 @@ gameScene.init = function()
 {
     this.followCount = 0;
     this.popularityScore = 0;
+    this.botCount = 0;
     this.topicNumber = 0;
     this.tweetAggression = 0;
 };
@@ -26,7 +27,8 @@ gameScene.preload = function()
     this.load.image('like',"assets/Like.png");
     this.load.image('retweet',"assets/Retweet.png");
     this.load.image('reply',"assets/Reply.jpg");
-
+    this.load.image('bot',"assets/Bot.png");
+    this.load.image('bot2',"assets/Bot2.png");
     this.load.image('up arrow', "assets/up arrow.png");
     this.load.image('arrow', "assets/arrow.png");
     this.load.image('down arrow', "assets/down arrow.png");
@@ -51,6 +53,7 @@ gameScene.create = function()
     this.fillUpgrades();
     this.fillEvents();
 
+
     //Buttons
 };
 
@@ -62,11 +65,16 @@ gameScene.update = function(time,delta)
         this.eventWindow.timer-=delta;
         if(this.eventWindow.timer>0)
         {
-
+            this.backGraphics.fillStyle(0x444444);
+            this.backGraphics.fillRect(gameScene.windowPos[3][0]+25,gameScene.windowPos[3][1]+150,200,25);
+            this.backGraphics.fillStyle(0xbb0000);
+            this.backGraphics.fillRect(gameScene.windowPos[3][0]+25,gameScene.windowPos[3][1]+150,200*this.eventWindow.timer/this.eventWindow.startTime,25);
         }
         else
         {
-
+            this.eventWindow.deleteCurrentEvent();
+            if(this.eventWindow.queue.length>0)
+                this.eventWindow.displayNextEvent();
         }
     }
 };
@@ -187,6 +195,17 @@ gameScene.fillTweetWall = function()
 gameScene.fillUpgrades = function()
 {
     this.upgrades.add(this.add.text(10,10,"Upgrades",{fill:"#000"}));
+    this.upgrades.botLabel = this.add.text(125,70,this.botCount,{fill:"#000"});
+    this.upgrades.add(this.upgrades.botLabel);
+
+    //Bot Logo Logic
+    let botLogo = this.add.sprite(50,75,'bot');
+    this.upgrades.add(botLogo);
+    botLogo.setInteractive();
+    botLogo.on('pointerover',() => botLogo.setTexture('bot2'));
+    botLogo.on('pointerout',() => botLogo.setTexture('bot'));
+    botLogo.on('pointerdown', () => this.addBots(1));
+
 };
 gameScene.fillEvents = function()
 {
@@ -198,12 +217,52 @@ gameScene.fillEvents = function()
     this.eventWindow.startTime = 10000;
     this.eventWindow.timer = 0;
     this.eventWindow.queue = [];
+
+    //Add an event to the queue, and auto-display it if nothing else is currently playing
+    gameScene.eventWindow.addEvent = function(text,time,onYourSide)
+    {
+        this.queue.push({
+            text:text,
+            time:time,
+            onYourSide:onYourSide
+        });
+        if(this.queue.length === 1)
+            this.displayNextEvent();
+    };
+    //Display the next event. The assumption is the previous event has already been cleared
+    gameScene.eventWindow.displayNextEvent = function()
+    {
+        this.add(gameScene.add.text(10,10,this.queue[0].text,{fill:"#000"}));
+        this.startTime = this.queue[0].time;
+        this.timer = this.queue[0].time;
+        gameScene.backGraphics.fillStyle(0xbb0000);
+        gameScene.backGraphics.fillRect(gameScene.windowPos[3][0]+25,gameScene.windowPos[3][1]+150,200,25);
+    };
+    //Clears the current event, but doesn't play the next event
+    gameScene.eventWindow.deleteCurrentEvent = function()
+    {
+        this.removeAll();
+        this.queue.shift();
+        gameScene.backGraphics.fillStyle(gameScene.windowColors[2]);
+        gameScene.backGraphics.fillRect(gameScene.windowPos[3][0]+25,gameScene.windowPos[3][1]+150,200,25);
+    };
 };
 
 gameScene.addFollowers = function(num)
 {
     this.followCount += num;
     this.controlPanel.followerLabel.setText(this.followCount);
+};
+
+gameScene.addBots = function(num)
+{
+  if(this.popularityScore > 19){
+    this.popularityScore -= 20;
+    this.controlPanel.popularityLabel.setText(this.popularityScore);
+    this.botCount += num;
+    this.upgrades.botLabel.setText(this.botCount);
+  }
+
 };
 
 gameScene.changePopularity = function(num)
@@ -272,3 +331,8 @@ gameScene.decrement = function(){
     this.controlPanel.tweetAggressionLabel.setText(this.tweetAggression);
   }
 };
+
+function botFollow(){
+  this.followCount = this.followCount + this.botCount;
+  this.controlPanel.followerLabel.setText(this.followCount);
+}
