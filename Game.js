@@ -32,6 +32,7 @@ gameScene.preload = function()
     this.load.image('up arrow', "assets/up arrow.png");
     this.load.image('arrow', "assets/arrow.png");
     this.load.image('down arrow', "assets/down arrow.png");
+    this.load.image('tweet', "assets/tweet.jpg");
     //['like','retweet','reply','mute','report']
 };
 
@@ -64,11 +65,16 @@ gameScene.update = function(time,delta)
         this.eventWindow.timer-=delta;
         if(this.eventWindow.timer>0)
         {
-
+            this.backGraphics.fillStyle(0x444444);
+            this.backGraphics.fillRect(gameScene.windowPos[3][0]+25,gameScene.windowPos[3][1]+150,200,25);
+            this.backGraphics.fillStyle(0xbb0000);
+            this.backGraphics.fillRect(gameScene.windowPos[3][0]+25,gameScene.windowPos[3][1]+150,200*this.eventWindow.timer/this.eventWindow.startTime,25);
         }
         else
         {
-
+            this.eventWindow.deleteCurrentEvent();
+            if(this.eventWindow.queue.length>0)
+                this.eventWindow.displayNextEvent();
         }
     }
 };
@@ -93,18 +99,22 @@ gameScene.fillControlPanel = function()
 
 
     //Text boxes that hold the game scores in them
-    this.controlPanel.topicLabel = this.add.text(60,config.height-260,"Donald Trump",{fill:"#000"});
+    this.controlPanel.topicLabel = this.add.text(60,config.height-250,"abortion",{fill:"#000"});
     this.controlPanel.tweetAggressionLabel = this.add.text(35, config.height-375, this.tweetAggression, {fill: "#000"});
     this.controlPanel.tweetAggressionLabel.setScale(6);
+    this.controlPanel.tweetInstructions = this.add.text(30, config.height-450, "-5 = most liberal\n 0 = moderate\n 5 = most conservative", {fill: "#000"});
     this.controlPanel.popularityLabel = this.add.text(10,config.height-75,this.popularityScore,{fill:"#000"});
     this.controlPanel.followerLabel = this.add.text(10,config.height-25,this.followCount,{fill:"#000"});
     this.controlPanel.add(this.controlPanel.popularityLabel);
     this.controlPanel.add(this.controlPanel.followerLabel);
     //Buttons
-    this.followButton = new Button(this,125,config.height-137,'follow',()=>{gameScene.addFollowers(1);gameScene.tweetWall.addTweet("You",generateTweet(this.tweetAggression),gameScene);});
+    this.followButton = new Button(this,180,config.height-60,'follow',()=>{gameScene.addFollowers(1),gameScene;});
+    this.followButton.setScale(.8);
     // this.followButton = new Button(this,125,config.height-137,'follow',()=>{gameScene.addFollowers(1);gameScene.eventWindow.addEvent(this.followCount,10000,true)});
-    this.topicToggle = new Button(this, 125, config.height-235, 'arrow', ()=>{gameScene.changeTopic();});
-    this.upButton = new Button(this, 160, config.height - 375, 'up arrow', ()=>{gameScene.increment();});
+    this.tweetButton = new Button(this, 125, config.height-165, 'tweet', ()=>{gameScene.tweetWall.addTweet("You",generateTweet(this.tweetAggression, this.topicNumber),gameScene);});
+    this.tweetButton.setScale(.2);
+    this.topicToggle = new Button(this, 125, config.height-225, 'arrow', ()=>{gameScene.changeTopic();});
+    this.upButton = new Button(this, 160, config.height - 370, 'up arrow', ()=>{gameScene.increment();});
     this.downButton = new Button(this, 160, config.height - 300, 'down arrow', ()=>{gameScene.decrement()});
     this.upButton.setScale(.1);
     this.downButton.setScale(.15);
@@ -207,6 +217,35 @@ gameScene.fillEvents = function()
     this.eventWindow.startTime = 10000;
     this.eventWindow.timer = 0;
     this.eventWindow.queue = [];
+
+    //Add an event to the queue, and auto-display it if nothing else is currently playing
+    gameScene.eventWindow.addEvent = function(text,time,onYourSide)
+    {
+        this.queue.push({
+            text:text,
+            time:time,
+            onYourSide:onYourSide
+        });
+        if(this.queue.length === 1)
+            this.displayNextEvent();
+    };
+    //Display the next event. The assumption is the previous event has already been cleared
+    gameScene.eventWindow.displayNextEvent = function()
+    {
+        this.add(gameScene.add.text(10,10,this.queue[0].text,{fill:"#000"}));
+        this.startTime = this.queue[0].time;
+        this.timer = this.queue[0].time;
+        gameScene.backGraphics.fillStyle(0xbb0000);
+        gameScene.backGraphics.fillRect(gameScene.windowPos[3][0]+25,gameScene.windowPos[3][1]+150,200,25);
+    };
+    //Clears the current event, but doesn't play the next event
+    gameScene.eventWindow.deleteCurrentEvent = function()
+    {
+        this.removeAll();
+        this.queue.shift();
+        gameScene.backGraphics.fillStyle(gameScene.windowColors[2]);
+        gameScene.backGraphics.fillRect(gameScene.windowPos[3][0]+25,gameScene.windowPos[3][1]+150,200,25);
+    };
 };
 
 gameScene.addFollowers = function(num)
@@ -262,12 +301,20 @@ function resetItemState(item){
 }
 
 gameScene.changeTopic = function(){
-  this.topicNumber += 1;
-  if (this.topicNumber%2 === 1){
+  if (this.topicNumber < 2){
+    this.topicNumber += 1;
+  }
+  else {
+    this.topicNumber = 0;
+  }
+  if (this.topicNumber === 0){
     this.controlPanel.topicLabel.setText("abortion");
   }
-  else{
-    this.controlPanel.topicLabel.setText("Donald Trump")
+  else if (this.topicNumber === 1){
+    this.controlPanel.topicLabel.setText("Donald Trump");
+  }
+  else if (this.topicNumber === 2){
+    this.controlPanel.topicLabel.setText("climate change");
   }
 };
 
