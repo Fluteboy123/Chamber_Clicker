@@ -111,7 +111,7 @@ gameScene.fillControlPanel = function()
     this.followButton = new Button(this,180,config.height-60,'follow',()=>{gameScene.addFollowers(1),gameScene;});
     this.followButton.setScale(.8);
     // this.followButton = new Button(this,125,config.height-137,'follow',()=>{gameScene.addFollowers(1);gameScene.eventWindow.addEvent(this.followCount,10000,true)});
-    this.tweetButton = new Button(this, 125, config.height-165, 'tweet', ()=>{gameScene.tweetWall.addTweet("You",generateTweet(this.tweetAggression, this.topicNumber),gameScene);});
+    this.tweetButton = new Button(this, 125, config.height-165, 'tweet', ()=>{gameScene.tweetWall.addTweet("You",generateTweet(this.tweetAggression, this.topicNumber), this.tweetAggression, gameScene);});
     this.tweetButton.setScale(.2);
     this.topicToggle = new Button(this, 125, config.height-225, 'arrow', ()=>{gameScene.changeTopic();});
     this.upButton = new Button(this, 160, config.height - 370, 'up arrow', ()=>{gameScene.increment();});
@@ -127,7 +127,7 @@ gameScene.fillTweetWall = function()
     this.tweetWall.currentTweets = [];
 
     //Function for adding a tweet
-    this.tweetWall.addTweet = function(name,text,scene)
+    this.tweetWall.addTweet = function(name,text,intensity,scene)
     {
         //Dimensions of the box
         const tweetHeight = 150, tweetLength = scene.windowPos[2][0] - scene.windowPos[1][0] - 20;
@@ -170,9 +170,9 @@ gameScene.fillTweetWall = function()
         let likeButton = scene.add.sprite(50,120,'like');
         let rtButton = scene.add.sprite(240,120,'retweet');
         let replyButton = scene.add.sprite(420,120,'reply');
-        makeInteractive(rtButton);
-        makeInteractive(likeButton);
-        makeInteractive(replyButton);
+        makeInteractive(rtButton, intensity);
+        makeInteractive(likeButton, intensity);
+        makeInteractive(replyButton, intensity);
         newTweet.add(replyButton);
         newTweet.add(rtButton);
         newTweet.add(likeButton);
@@ -272,9 +272,9 @@ gameScene.changePopularity = function(num)
 };
 
 
-function makeInteractive(item){
+function makeInteractive(item, num){
     item.setInteractive();
-    item.on('pointerdown',()=>{gameScene.changePopularity(1);});
+    item.on('pointerdown',()=>{gameScene.changePopularity(Math.abs(num)+1);});
     item.on('pointerdown', function(pointer){
         resetItemState(item);
         item.onClickTween = gameScene.tweens.add({
