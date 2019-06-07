@@ -3,7 +3,8 @@ function generateTweet(num, topic){
   var tweets = [];
   if (topic === 0){
     //Abortion tweets
-    tweets = ["Right to lifers are hypocritical moral cowards\n and we’ll all be better off when they’re dead",
+    tweets =
+["Right to lifers are hypocritical moral cowards\n and we’ll all be better off when they’re dead",
 "Republicans will defend you until you’re born,\n but after that don’t expect any handouts",
 "Men shouldn’t even be allowed to talk about\n abortions, it’s not their problem",
 "I just don’t understand how people prioritize\n fetuses over their LIVING MOTHERS",
@@ -17,7 +18,8 @@ function generateTweet(num, topic){
   }
   else if (topic === 1){
     //Trump tweets
-    tweets = ["You better watch your fucking ass Trump, I \nbought a gun and I’m coming for your head.",
+    tweets =
+["You better watch your fucking ass Trump, I \nbought a gun and I’m coming for your head.",
 "Every day a predatorial, sociopathic, dumbass \npig is our president, I get closer to moving \nto Canada.",
 "I think that it’s ridiculous that the Mueller \nreport is still unavailable to the public!",
 "#AnyoneButTrump2020",
@@ -31,7 +33,8 @@ function generateTweet(num, topic){
   }
   else if (topic === 2){
     //Climate change tweets
-    tweets = ["If you haven’t already gone vegan, you might as \nwell kill yourself and fertilize the plants for \nthe rest of us",
+    tweets =
+["If you haven’t already gone vegan, you might as \nwell kill yourself and fertilize the plants for \nthe rest of us",
 "Our industrialist society is destroying our \nplanet #Socialism #KillBigBusiness",
 "These senile climate deniers need to get out of \nthe way before they doom the rest of us",
 "Phasing out plastic straws was a good start, \nbut it’s not enough!",
@@ -48,7 +51,8 @@ return tweets[num+5];
 
 //Store all tweets together for random generation by CPU
 function generateRandomTweet(rand){
-  var tweets = ["Right to lifers are hypocritical moral cowards\n and we’ll all be better off when they’re dead",
+  var tweets =
+["Right to lifers are hypocritical moral cowards\n and we’ll all be better off when they’re dead",
 "Republicans will defend you until you’re born,\n but after that don’t expect any handouts",
 "Men shouldn’t even be allowed to talk about\n abortions, it’s not their problem",
 "I just don’t understand how people prioritize\n fetuses over their LIVING MOTHERS",
