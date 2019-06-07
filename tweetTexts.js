@@ -1,6 +1,8 @@
+//Store various tweets in arrays, ordered by intensity (-5 to 5)
 function generateTweet(num, topic){
   var tweets = [];
   if (topic === 0){
+    //Abortion tweets
     tweets = ["Right to lifers are hypocritical moral cowards\n and we’ll all be better off when they’re dead",
 "Republicans will defend you until you’re born,\n but after that don’t expect any handouts",
 "Men shouldn’t even be allowed to talk about\n abortions, it’s not their problem",
@@ -14,6 +16,7 @@ function generateTweet(num, topic){
 "Abortion is the biggest genocide in the history\n of the Earth, MUCH WORSE THAN THE HOLOCAUST" ]
   }
   else if (topic === 1){
+    //Trump tweets
     tweets = ["You better watch your fucking ass Trump, I \nbought a gun and I’m coming for your head.",
 "Every day a predatorial, sociopathic, dumbass \npig is our president, I get closer to moving \nto Canada.",
 "I think that it’s ridiculous that the Mueller \nreport is still unavailable to the public!",
@@ -27,6 +30,7 @@ function generateTweet(num, topic){
 "Thank GOD WE HAVE a BUSINESS MAN SAVING OUR \nCOUNTRY. OBAMA’S A MONKEY, HILLARYS THE DEVIL, \nFUCK BERNIE #MAGA#MAGA"]
   }
   else if (topic === 2){
+    //Climate change tweets
     tweets = ["If you haven’t already gone vegan, you might as \nwell kill yourself and fertilize the plants for \nthe rest of us",
 "Our industrialist society is destroying our \nplanet #Socialism #KillBigBusiness",
 "These senile climate deniers need to get out of \nthe way before they doom the rest of us",
@@ -42,6 +46,7 @@ function generateTweet(num, topic){
 return tweets[num+5];
 }
 
+//Store all tweets together for random generation by CPU
 function generateRandomTweet(rand){
   var tweets = ["Right to lifers are hypocritical moral cowards\n and we’ll all be better off when they’re dead",
 "Republicans will defend you until you’re born,\n but after that don’t expect any handouts",
@@ -75,5 +80,6 @@ function generateRandomTweet(rand){
 "They claim that a climate change of .5 degrees \nwould be bad. That happens every time the sun\nrises or sets. IDIOTS",
 "Climate change is FAKE NEWS, Donald Trump won’t \nfall for your liberal bullshit"]
 
+//Randomly choose a tweet for printing
 return tweets[Math.floor(Math.random()*32)];
 }
