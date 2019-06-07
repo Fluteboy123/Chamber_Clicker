@@ -34,10 +34,8 @@ gameScene.preload = function()
     this.load.image('arrow', "assets/arrow.png");
     this.load.image('down arrow', "assets/down arrow.png");
     this.load.image('tweet', "assets/tweet.png");
-    this.load.image('verify', "assets/Verify.png")
-    this.load.image('verify2', "assets/Verify2.png")
-
-    //['like','retweet','reply','mute','report']
+    this.load.image('verify', "assets/Verify.png");
+    this.load.image('verify2', "assets/Verify2.png");
 };
 
 gameScene.create = function()
@@ -68,28 +66,28 @@ gameScene.create = function()
     //Buttons
 };
 
-gameScene.update = function(time,delta)
-{
-    //Update the event progress
-    if(this.eventWindow.timer>0)
-    {
-        this.eventWindow.timer-=delta;
-        if(this.eventWindow.timer>0)
-        {
-            this.backGraphics.fillStyle(0x444444);
-            this.backGraphics.fillRect(gameScene.windowPos[3][0]+25,gameScene.windowPos[3][1]+150,200,25);
-            this.backGraphics.fillStyle(0xbb0000);
-            this.backGraphics.fillRect(gameScene.windowPos[3][0]+25,gameScene.windowPos[3][1]+150,200*this.eventWindow.timer/this.eventWindow.startTime,25);
-        }
-        else
-        {
-            this.eventWindow.deleteCurrentEvent();
-            if(this.eventWindow.queue.length>0)
-                this.eventWindow.displayNextEvent();
-        }
-    }
-
-};
+// gameScene.update = function(time,delta)
+// {
+//     //Update the event progress
+//     if(this.eventWindow.timer>0)
+//     {
+//         this.eventWindow.timer-=delta;
+//         if(this.eventWindow.timer>0)
+//         {
+//             this.backGraphics.fillStyle(0x444444);
+//             this.backGraphics.fillRect(gameScene.windowPos[3][0]+25,gameScene.windowPos[3][1]+150,200,25);
+//             this.backGraphics.fillStyle(0xbb0000);
+//             this.backGraphics.fillRect(gameScene.windowPos[3][0]+25,gameScene.windowPos[3][1]+150,200*this.eventWindow.timer/this.eventWindow.startTime,25);
+//         }
+//         else
+//         {
+//             this.eventWindow.deleteCurrentEvent();
+//             if(this.eventWindow.queue.length>0)
+//                 this.eventWindow.displayNextEvent();
+//         }
+//     }
+//
+// };
 
 gameScene.fillBackground = function()
 {
@@ -128,11 +126,11 @@ gameScene.fillControlPanel = function()
     this.upButton = new Button(this, 175, config.height - 370, 'up arrow', ()=>{gameScene.increment();});
     this.downButton = new Button(this, 175, config.height - 300, 'down arrow', ()=>{gameScene.decrement()});
     this.controlPanel.add(this.followButton);
-    buttonTween(this.tweetButton);
-    buttonTween(this.topicToggle);
-    buttonTween(this.upButton);
-    buttonTween(this.downButton);
-    buttonTween(this.followButton);
+    this.buttonTween(this.tweetButton);
+    this.buttonTween(this.topicToggle);
+    this.buttonTween(this.upButton);
+    this.buttonTween(this.downButton);
+    this.buttonTween(this.followButton);
 };
 gameScene.fillTweetWall = function()
 {
@@ -166,6 +164,7 @@ gameScene.fillTweetWall = function()
             }
             else
             {
+                //Scale up from the top left
                 scene.tweens.add({
                     targets:tweet,
                     duration:100,
@@ -176,9 +175,9 @@ gameScene.fillTweetWall = function()
 
 
         //Make the new box
+        //Background wall, name, profile picture and contents
         let newTweet = scene.add.container(scene.windowPos[1][0]+10,scene.windowPos[1][1]+10);
         let wall = scene.add.sprite(tweetLength/2,tweetHeight/2,'tweetBG');
-      //  wall.setScale(4.8,1.5);
         newTweet.add(wall);
         let anon = scene.add.sprite(25,25,'anon');
         anon.setScale(.1171875);
@@ -195,10 +194,12 @@ gameScene.fillTweetWall = function()
             scaleX:1,
             scaleY:1
         });
-
-
         this.currentTweets.push(newTweet);
-        //Change following with respect to current following and polarity
+
+        /*Change following with respect to current following and polarity
+        * Less popularity will reward neutral behavior and punish extreme acts
+        * More popularity will reward extreme outbursts while punishing moderate behavior
+        */
         switch(Math.floor(Math.log(gameScene.followCount+0.1000001)))
         {
             case -1:
@@ -320,7 +321,7 @@ gameScene.fillTweetWall = function()
         gameScene.controlPanel.followerLabel.setText(gameScene.followCount);
     };
 
-    //Function for adding a tweet
+    //Function for adding a tweet by someone else
     this.tweetWall.addRandomTweet = function(name,text,intensity,scene)
     {
         //Dimensions of the box
@@ -333,20 +334,25 @@ gameScene.fillTweetWall = function()
             if(tweet.y + tweetHeight+10>=config.height)
             {
                 const wall = this;
+                //Move down, and go away
                 scene.tweens.add({
                     targets:tweet,
                     duration:100,
                     y:tweet.y+tweetHeight+10,
-                    onComplete: function()
+                    onStart: function()
                     {
                         wall.currentTweets.shift();
-                        tweet.destroy();
                         i--;
+                    },
+                    onComplete: function()
+                    {
+                        tweet.destroy();
                     }
                 });
             }
             else
             {
+                //Move down
                 scene.tweens.add({
                     targets:tweet,
                     duration:100,
@@ -354,10 +360,11 @@ gameScene.fillTweetWall = function()
                 });
             }
         }
+
         //Make the new box
+        //Name, background wall, profile picture, contents, and response buttons
         let newTweet = scene.add.container(scene.windowPos[1][0]+10,scene.windowPos[1][1]+10);
         let wall = scene.add.sprite(tweetLength/2,tweetHeight/2,'tweetBG');
-      //  wall.setScale(4.8,1.5);
         newTweet.add(wall);
         let anon = scene.add.sprite(25,25,'anon');
         anon.setScale(.1171875);
@@ -373,6 +380,7 @@ gameScene.fillTweetWall = function()
         newTweet.add(anon);
         newTweet.add(scene.add.text(50,15,name,{fill:"#000"}));
         newTweet.add(scene.add.text(30,50,text,{fill:"#000"}));
+        //Scale up from the top left
         scene.tweens.add({
             targets:newTweet,
             duration:100,
@@ -384,8 +392,6 @@ gameScene.fillTweetWall = function()
             scaleY:1
         });
         this.currentTweets.push(newTweet);
-
-        gameScene.controlPanel.followerLabel.setText(gameScene.followCount);
       }
 };
 
@@ -402,15 +408,25 @@ gameScene.fillUpgrades = function()
     let botLogo = this.add.sprite(50,75,'bot');
     this.upgrades.add(botLogo);
     botLogo.setInteractive();
-    botLogo.on('pointerdown', () => this.addBots(1,botLogo));
-    buttonTween(botLogo);
+    botLogo.on('pointerdown', () => this.upgrades.addBots(1,botLogo));
+    this.buttonTween(botLogo);
 
     //Verify botLogo
     let vLogo = this.add.sprite(125,210,'verify');
     vLogo.setInteractive();
     this.upgrades.add(vLogo);
     vLogo.on('pointerdown', () => this.getVerified(vLogo));
-    buttonTween(vLogo);
+    this.buttonTween(vLogo);
+
+    gameScene.upgrades.addBots = function(num,item)
+    {
+        if(gameScene.popularityScore > 19){
+            item.setTexture('bot2');
+            gameScene.changePopularity(-20);
+            gameScene.botCount += num;
+            this.botLabel.setText(gameScene.botCount);
+        }
+    };
 };
 
 
@@ -422,39 +438,40 @@ gameScene.fillEvents = function()
     * timer represents how much time is left. If timer is negative or zero, there is no current event.
     * When one event ends, the next event in the queue will run
     */
-    this.eventWindow.startTime = 10000;
-    this.eventWindow.timer = 0;
-    this.eventWindow.queue = [];
+    // this.eventWindow.startTime = 10000;
+    // this.eventWindow.timer = 0;
+    // this.eventWindow.queue = [];
 
     //Add an event to the queue, and auto-display it if nothing else is currently playing
-    gameScene.eventWindow.addEvent = function(text,time,onYourSide)
-    {
-        this.queue.push({
-            text:text,
-            time:time,
-            onYourSide:onYourSide
-        });
-        if(this.queue.length === 1)
-            this.displayNextEvent();
-    };
+    // gameScene.eventWindow.addEvent = function(text,time,onYourSide)
+    // {
+    //     this.queue.push({
+    //         text:text,
+    //         time:time,
+    //         onYourSide:onYourSide
+    //     });
+    //     if(this.queue.length === 1)
+    //         this.displayNextEvent();
+    // };
     //Display the next event. The assumption is the previous event has already been cleared
-    gameScene.eventWindow.displayNextEvent = function()
-    {
-        this.add(gameScene.add.text(10,10,this.queue[0].text,{fill:"#000"}));
-        this.startTime = this.queue[0].time;
-        this.timer = this.queue[0].time;
-        gameScene.backGraphics.fillStyle(0xbb0000);
-        gameScene.backGraphics.fillRect(gameScene.windowPos[3][0]+25,gameScene.windowPos[3][1]+150,200,25);
-    };
+    // gameScene.eventWindow.displayNextEvent = function()
+    // {
+    //     this.add(gameScene.add.text(10,10,this.queue[0].text,{fill:"#000"}));
+    //     this.startTime = this.queue[0].time;
+    //     this.timer = this.queue[0].time;
+    //     gameScene.backGraphics.fillStyle(0xbb0000);
+    //     gameScene.backGraphics.fillRect(gameScene.windowPos[3][0]+25,gameScene.windowPos[3][1]+150,200,25);
+    // };
     //Clears the current event, but doesn't play the next event
-    gameScene.eventWindow.deleteCurrentEvent = function()
-    {
-        this.removeAll();
-        this.queue.shift();
-        gameScene.backGraphics.fillStyle(gameScene.windowColors[2]);
-        gameScene.backGraphics.fillRect(gameScene.windowPos[3][0]+25,gameScene.windowPos[3][1]+150,200,25);
-    };
+    // gameScene.eventWindow.deleteCurrentEvent = function()
+    // {
+    //     this.removeAll();
+    //     this.queue.shift();
+    //     gameScene.backGraphics.fillStyle(gameScene.windowColors[2]);
+    //     gameScene.backGraphics.fillRect(gameScene.windowPos[3][0]+25,gameScene.windowPos[3][1]+150,200,25);
+    // };
 
+    //Timer
     this.eventWindow.goalLabel = this.add.text(750, config.height-200, "Prototype: Get verified as \nquickly as possible", {fill: "#000"});
     this.eventWindow.clock = this.add.text(750, config.height-150, "Elapsed time: " + this.gameTime, {fill: "#000"});
 };
@@ -465,18 +482,6 @@ gameScene.addFollowers = function(num)
     if(this.followCount<0)
         this.followCount = 0;
     this.controlPanel.followerLabel.setText(this.followCount);
-};
-
-gameScene.addBots = function(num,item)
-{
-  if(this.popularityScore > 19){
-    item.setTexture('bot2');
-    this.popularityScore -= 20;
-    this.controlPanel.popularityLabel.setText(this.popularityScore);
-    this.botCount += num;
-    this.upgrades.botLabel.setText(this.botCount);
-  }
-
 };
 
 gameScene.changePopularity = function(num)
@@ -600,7 +605,7 @@ function makeInteractive(item, num){
         gameScene.controlPanel.popularityLabel.setText(gameScene.popularityScore);
     });
     item.on('pointerdown', function(pointer){
-        resetItemState(item);
+        gameScene.resetItemState(item);
         item.onClickTween = gameScene.tweens.add({
             targets: item,
             scaleX: 1.2,
@@ -613,7 +618,7 @@ function makeInteractive(item, num){
             }
         });
     });
-    item.on('pointerover',function(pointer){
+    item.on('pointerover',function(){
       item.onHoverTween = gameScene.tweens.add({
           targets:item,
           duration: 100,
@@ -622,18 +627,18 @@ function makeInteractive(item, num){
           getEnd: () => 0.5},
           ease: 'Quad.easeIn',
         })
-      })
+      });
 
-      item.on('pointerout',function(pointer){
-          resetItemState(item);
-        })
+      item.on('pointerout',function(){
+          gameScene.resetItemState(item);
+        });
 
 }
 
-function buttonTween(item){
+gameScene.buttonTween = function(item){
   item.setInteractive();
-  item.on('pointerdown', function(pointer){
-      resetItemState(item);
+  item.on('pointerdown', function(){
+      gameScene.resetItemState(item);
       item.onClickTween = gameScene.tweens.add({
           targets: item,
           scaleX: 1.1,
@@ -655,24 +660,22 @@ function buttonTween(item){
         getEnd: () => 0.5},
         ease: 'Quad.easeIn',
       })
-    })
+    });
 
     item.on('pointerout',function(pointer){
-        resetItemState(item);
-      })
-}
+        gameScene.resetItemState(item);
+      });
+};
 
-function resetItemState(item){
+gameScene.resetItemState = function(item){
 
     if(item.onClickTween){
         item.onClickTween.remove();
     }
-
     if(item.onHoverTween){
       item.setAlpha(1);
     }
-
-}
+};
 
 gameScene.changeTopic = function(){
   if (this.topicNumber < 2){

@@ -75,5 +75,5 @@ function generateRandomTweet(rand){
 "They claim that a climate change of .5 degrees \nwould be bad. That happens every time the sun\nrises or sets. IDIOTS",
 "Climate change is FAKE NEWS, Donald Trump won’t \nfall for your liberal bullshit"]
 
-return tweets[Math.floor(Math.random()*32)];
+return tweets[Math.floor(Math.random()*33)];
 }
