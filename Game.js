@@ -396,7 +396,7 @@ gameScene.fillUpgrades = function()
     this.upgrades.add(this.add.text(30,125,"Cost: 20 Popularity",{fill:"#000"}));
     this.upgrades.botLabel = this.add.text(125,70,this.botCount,{fill:"#000"});
     this.upgrades.add(this.upgrades.botLabel);
-    this.upgrades.add(this.add.text(25,265,"Cost: 1000 Popularity",{fill:"#000"}));
+    this.upgrades.add(this.add.text(25,265,"Cost: 1000 Followers",{fill:"#000"}));
 
     //Bot Logo Logic
     let botLogo = this.add.sprite(50,75,'bot');
@@ -738,8 +738,7 @@ function addTime(){
 
 gameScene.getVerified = function(item){
 
-  if(this.popularityScore > 999){
-    this.popularityScore -= 1000;
+  if(this.followCount > 999){
     this.controlPanel.popularityLabel.setText(this.popularityScore);
     item.setTexture('verify2');
   }
