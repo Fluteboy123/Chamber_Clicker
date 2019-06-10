@@ -655,11 +655,13 @@ function buttonTween(item){
         getEnd: () => 0.5},
         ease: 'Quad.easeIn',
       })
+      console.log("over");
     })
 
     item.on('pointerout',function(pointer){
-        resetItemState(item);
+        resetItemState(this);
       })
+      console.log("out");
 }
 
 function resetItemState(item){
